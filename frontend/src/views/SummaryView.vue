@@ -80,8 +80,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { summaryApi } from '@/services/api'
-import type { MonthlySummary } from '@/types'
+import { summaryApi } from '../services/api'
+import type { MonthlySummary } from '../types/index'
 
 const summary = ref<MonthlySummary | null>(null)
 const loading = ref(false)

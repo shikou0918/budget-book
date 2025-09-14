@@ -77,8 +77,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { useCategoryStore } from '@/stores/category'
-import type { Transaction, CreateTransactionRequest } from '@/types'
+import { useCategoryStore } from '../../stores/category'
+import type { Transaction, CreateTransactionRequest } from '../../types'
 
 interface Props {
   show: boolean

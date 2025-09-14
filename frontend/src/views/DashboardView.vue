@@ -63,9 +63,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useTransactionStore } from '@/stores/transaction'
-import { summaryApi } from '@/services/api'
-import type { MonthlySummary } from '@/types'
+import { useTransactionStore } from '../stores/transaction'
+import { summaryApi } from '../services/api'
+import type { MonthlySummary } from '../types'
 
 const transactionStore = useTransactionStore()
 const { transactions, loading: transactionLoading, error: transactionError } = transactionStore
