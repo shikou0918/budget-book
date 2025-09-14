@@ -1,34 +1,40 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import DashboardView from '../views/DashboardView.vue'
+import CategoryView from '../views/CategoryView.vue'
+import BudgetView from '../views/BudgetView.vue'
+import SummaryView from '../views/SummaryView.vue'
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
+const routes = [
     {
       path: '/',
       name: 'dashboard',
-      component: () => import('@/views/DashboardView.vue')
+      component: DashboardView
     },
     {
       path: '/transactions',
       name: 'transactions',
-      component: () => import('@/views/TransactionView.vue')
+      component: () => DashboardView
     },
     {
       path: '/categories',
       name: 'categories',
-      component: () => import('@/views/CategoryView.vue')
+      component: () => CategoryView
     },
     {
       path: '/budgets',
       name: 'budgets',
-      component: () => import('@/views/BudgetView.vue')
+      component: () => BudgetView
     },
     {
       path: '/summary',
       name: 'summary',
-      component: () => import('@/views/SummaryView.vue')
+      component: () => SummaryView
     }
   ]
-})
+
+  const router = createRouter({
+    history: createWebHistory(),
+    routes,
+  })
 
 export default router
