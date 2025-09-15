@@ -72,9 +72,9 @@
 
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
-  import { useTransactionStore } from '../stores/transaction';
-  import TransactionModal from '../components/transaction/TransactionModal.vue';
-  import type { Transaction, CreateTransactionRequest } from '../types';
+  import { useTransactionStore } from '@/stores/transaction';
+  import TransactionModal from '@/components/transaction/TransactionModal.vue';
+  import type { Transaction, CreateTransactionRequest } from '@/types';
 
   const transactionStore = useTransactionStore();
   const { transactions, loading, error } = transactionStore;

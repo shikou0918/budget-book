@@ -47,9 +47,9 @@
 
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
-  import { budgetApi } from '../services/api';
-  import BudgetModal from '../components/budget/BudgetModal.vue';
-  import type { Budget, CreateBudgetRequest } from '../types';
+  import { budgetApi } from '@/services/api';
+  import BudgetModal from '@/components/budget/BudgetModal.vue';
+  import type { Budget, CreateBudgetRequest } from '@/types';
 
   const budgets = ref<Budget[]>([]);
   const loading = ref(false);

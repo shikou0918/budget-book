@@ -66,8 +66,8 @@
 
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
-  import { useCategoryStore } from '../../stores/category';
-  import type { Budget, CreateBudgetRequest } from '../../types';
+  import { useCategoryStore } from '@/stores/category';
+  import type { Budget, CreateBudgetRequest } from '@/types';
 
   interface Props {
     show: boolean;

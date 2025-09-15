@@ -53,9 +53,9 @@
 
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
-  import { useCategoryStore } from '../stores/category';
-  import CategoryModal from '../components/category/CategoryModal.vue';
-  import type { Category, CreateCategoryRequest } from '../types';
+  import { useCategoryStore } from '@/stores/category';
+  import CategoryModal from '@/components/category/CategoryModal.vue';
+  import type { Category, CreateCategoryRequest } from '@/types';
 
   const categoryStore = useCategoryStore();
   const { categories, loading, error } = categoryStore;

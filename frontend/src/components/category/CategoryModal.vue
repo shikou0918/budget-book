@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
-  import type { Category, CreateCategoryRequest } from '../../types';
+  import type { Category, CreateCategoryRequest } from '@/types';
 
   interface Props {
     show: boolean;

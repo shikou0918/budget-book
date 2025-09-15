@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import DashboardView from '../views/DashboardView.vue';
-import CategoryView from '../views/CategoryView.vue';
-import BudgetView from '../views/BudgetView.vue';
-import SummaryView from '../views/SummaryView.vue';
-import TransactionView from '../views/TransactionView.vue';
+import DashboardView from '@/views/DashboardView.vue';
+import CategoryView from '@/views/CategoryView.vue';
+import BudgetView from '@/views/BudgetView.vue';
+import SummaryView from '@/views/SummaryView.vue';
+import TransactionView from '@/views/TransactionView.vue';
 
 const routes = [
   {
