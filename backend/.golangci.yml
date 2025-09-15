@@ -1,0 +1,62 @@
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: budget-book
+  golint:
+    min-confidence: 0.8
+  govet:
+    check-shadowing: true
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  goconst:
+    min-len: 3
+    min-occurrences: 2
+  misspell:
+    locale: US
+  unused:
+    check-exported: false
+
+linters:
+  enable:
+    - gofmt
+    - goimports
+    - golint
+    - govet
+    - errcheck
+    - gosimple
+    - staticcheck
+    - ineffassign
+    - unconvert
+    - goconst
+    - misspell
+    - unused
+    - deadcode
+    - varcheck
+    - structcheck
+  disable:
+    - typecheck
+
+issues:
+  exclude-use-default: false
+  exclude:
+    - "G404: Use of weak random number generator"
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - golint
+        - goconst
+    - linters:
+        - golint
+      text: "should have comment or be unexported"

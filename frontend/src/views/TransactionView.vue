@@ -8,9 +8,7 @@
     <div class="card">
       <div v-if="loading" class="loading">読み込み中...</div>
       <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else-if="transactions.length === 0">
-        取引がありません
-      </div>
+      <div v-else-if="transactions.length === 0">取引がありません</div>
       <div v-else>
         <table class="table">
           <thead>
@@ -27,18 +25,34 @@
             <tr v-for="transaction in transactions" :key="transaction.id">
               <td>{{ formatDate(transaction.transaction_date) }}</td>
               <td>
-                <span :class="{ 'badge-income': transaction.type === 'income', 'badge-expense': transaction.type === 'expense' }">
+                <span
+                  :class="{
+                    'badge-income': transaction.type === 'income',
+                    'badge-expense': transaction.type === 'expense',
+                  }"
+                >
                   {{ transaction.type === 'income' ? '収入' : '支出' }}
                 </span>
               </td>
               <td>{{ transaction.category?.name }}</td>
-              <td :class="{ income: transaction.type === 'income', expense: transaction.type === 'expense' }">
-                {{ transaction.type === 'income' ? '+' : '-' }}¥{{ formatNumber(transaction.amount) }}
+              <td
+                :class="{
+                  income: transaction.type === 'income',
+                  expense: transaction.type === 'expense',
+                }"
+              >
+                {{ transaction.type === 'income' ? '+' : '-' }}¥{{
+                  formatNumber(transaction.amount)
+                }}
               </td>
               <td>{{ transaction.memo || '-' }}</td>
               <td>
-                <button class="btn btn-secondary" @click="editTransaction(transaction)">編集</button>
-                <button class="btn btn-danger" @click="deleteTransaction(transaction.id)">削除</button>
+                <button class="btn btn-secondary" @click="editTransaction(transaction)">
+                  編集
+                </button>
+                <button class="btn btn-danger" @click="deleteTransaction(transaction.id)">
+                  削除
+                </button>
               </td>
             </tr>
           </tbody>
@@ -57,129 +71,129 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useTransactionStore } from '../stores/transaction'
-import TransactionModal from '../components/transaction/TransactionModal.vue'
-import type { Transaction, CreateTransactionRequest } from '../types'
+  import { ref, onMounted } from 'vue';
+  import { useTransactionStore } from '../stores/transaction';
+  import TransactionModal from '../components/transaction/TransactionModal.vue';
+  import type { Transaction, CreateTransactionRequest } from '../types';
 
-const transactionStore = useTransactionStore()
-const { transactions, loading, error } = transactionStore
+  const transactionStore = useTransactionStore();
+  const { transactions, loading, error } = transactionStore;
 
-const showCreateModal = ref(false)
-const showEditModal = ref(false)
-const editingTransaction = ref<Transaction | null>(null)
+  const showCreateModal = ref(false);
+  const showEditModal = ref(false);
+  const editingTransaction = ref<Transaction | null>(null);
 
-const formatNumber = (num: number) => {
-  return new Intl.NumberFormat('ja-JP').format(num)
-}
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('ja-JP').format(num);
+  };
 
-const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('ja-JP')
-}
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('ja-JP');
+  };
 
-const editTransaction = (transaction: Transaction) => {
-  editingTransaction.value = transaction
-  showEditModal.value = true
-}
+  const editTransaction = (transaction: Transaction) => {
+    editingTransaction.value = transaction;
+    showEditModal.value = true;
+  };
 
-const deleteTransaction = async (id: number) => {
-  if (confirm('この取引を削除しますか？')) {
+  const deleteTransaction = async (id: number) => {
+    if (confirm('この取引を削除しますか？')) {
+      try {
+        await transactionStore.deleteTransaction(id);
+      } catch (err) {
+        console.error('Error deleting transaction:', err);
+      }
+    }
+  };
+
+  const closeModal = () => {
+    showCreateModal.value = false;
+    showEditModal.value = false;
+    editingTransaction.value = null;
+  };
+
+  const handleSave = async (data: CreateTransactionRequest) => {
     try {
-      await transactionStore.deleteTransaction(id)
+      if (editingTransaction.value) {
+        await transactionStore.updateTransaction(editingTransaction.value.id, data);
+      } else {
+        await transactionStore.createTransaction(data);
+      }
+      closeModal();
     } catch (err) {
-      console.error('Error deleting transaction:', err)
+      console.error('Error saving transaction:', err);
     }
-  }
-}
+  };
 
-const closeModal = () => {
-  showCreateModal.value = false
-  showEditModal.value = false
-  editingTransaction.value = null
-}
-
-const handleSave = async (data: CreateTransactionRequest) => {
-  try {
-    if (editingTransaction.value) {
-      await transactionStore.updateTransaction(editingTransaction.value.id, data)
-    } else {
-      await transactionStore.createTransaction(data)
-    }
-    closeModal()
-  } catch (err) {
-    console.error('Error saving transaction:', err)
-  }
-}
-
-onMounted(() => {
-  transactionStore.fetchTransactions()
-})
+  onMounted(() => {
+    transactionStore.fetchTransactions();
+  });
 </script>
 
 <style scoped>
-.transactions {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+  .transactions {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.page-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.badge-income,
-.badge-expense {
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.badge-income {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.badge-expense {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.income {
-  color: #28a745;
-}
-
-.expense {
-  color: #dc3545;
-}
-
-.table td .btn {
-  margin-right: 0.5rem;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-}
-
-@media (max-width: 768px) {
   .page-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
   }
-  
-  .table {
-    font-size: 0.875rem;
+
+  .page-header h2 {
+    margin: 0;
+    color: #333;
   }
-  
+
+  .badge-income,
+  .badge-expense {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .badge-income {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .badge-expense {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .income {
+    color: #28a745;
+  }
+
+  .expense {
+    color: #dc3545;
+  }
+
   .table td .btn {
-    font-size: 0.625rem;
-    padding: 0.125rem 0.25rem;
+    margin-right: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
   }
-}
+
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .table {
+      font-size: 0.875rem;
+    }
+
+    .table td .btn {
+      font-size: 0.625rem;
+      padding: 0.125rem 0.25rem;
+    }
+  }
 </style>

@@ -67,12 +67,12 @@ func (h *CategoryHandler) GetCategory(c echo.Context) error {
 
 func (h *CategoryHandler) GetCategories(c echo.Context) error {
 	categoryType := c.QueryParam("type")
-	
+
 	if categoryType != "" {
 		if categoryType != "income" && categoryType != "expense" {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid category type. Use 'income' or 'expense'"})
 		}
-		
+
 		categories, err := h.usecase.GetCategoriesByType(entity.CategoryType(categoryType))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})

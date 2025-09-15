@@ -1,12 +1,12 @@
 package entity
 
 type MonthlySummary struct {
-	Year             int                        `json:"year"`
-	Month            int                        `json:"month"`
-	TotalIncome      float64                    `json:"total_income"`
-	TotalExpense     float64                    `json:"total_expense"`
-	Balance          float64                    `json:"balance"`
-	CategorySummary  map[uint64]*CategorySummary `json:"category_summary"`
+	Year            int                         `json:"year"`
+	Month           int                         `json:"month"`
+	TotalIncome     float64                     `json:"total_income"`
+	TotalExpense    float64                     `json:"total_expense"`
+	Balance         float64                     `json:"balance"`
+	CategorySummary map[uint64]*CategorySummary `json:"category_summary"`
 }
 
 type CategorySummary struct {

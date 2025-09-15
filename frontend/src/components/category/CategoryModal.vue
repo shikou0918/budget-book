@@ -9,12 +9,12 @@
       <form @submit.prevent="handleSubmit" class="modal-body">
         <div class="form-group">
           <label class="form-label">カテゴリ名</label>
-          <input 
-            v-model="form.name" 
-            type="text" 
-            class="form-input" 
+          <input
+            v-model="form.name"
+            type="text"
+            class="form-input"
             maxlength="50"
-            required 
+            required
             placeholder="カテゴリ名を入力"
           />
         </div>
@@ -31,22 +31,18 @@
         <div class="form-group">
           <label class="form-label">色</label>
           <div class="color-input-group">
-            <input 
-              v-model="form.color" 
-              type="color" 
-              class="form-color" 
-            />
-            <input 
-              v-model="form.color" 
-              type="text" 
-              class="form-input color-text" 
+            <input v-model="form.color" type="color" class="form-color" />
+            <input
+              v-model="form.color"
+              type="text"
+              class="form-input color-text"
               pattern="#[0-9A-Fa-f]{6}"
               placeholder="#007BFF"
             />
           </div>
           <div class="color-presets">
-            <button 
-              v-for="color in colorPresets" 
+            <button
+              v-for="color in colorPresets"
               :key="color"
               type="button"
               class="color-preset"
@@ -70,183 +66,193 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import type { Category, CreateCategoryRequest } from '../../types'
+  import { ref, computed, watch } from 'vue';
+  import type { Category, CreateCategoryRequest } from '../../types';
 
-interface Props {
-  show: boolean
-  category?: Category | null
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  close: []
-  save: [data: CreateCategoryRequest]
-}>()
-
-const form = ref<CreateCategoryRequest>({
-  name: '',
-  type: 'expense',
-  color: '#007BFF'
-})
-
-const colorPresets = [
-  '#007BFF', '#28a745', '#dc3545', '#ffc107', '#17a2b8',
-  '#6610f2', '#e83e8c', '#fd7e14', '#20c997', '#6c757d'
-]
-
-const isFormValid = computed(() => {
-  return form.value.name.trim() && 
-         form.value.type && 
-         form.value.color
-})
-
-const handleOverlayClick = (e: Event) => {
-  if (e.target === e.currentTarget) {
-    emit('close')
+  interface Props {
+    show: boolean;
+    category?: Category | null;
   }
-}
 
-const handleSubmit = () => {
-  if (isFormValid.value) {
-    emit('save', { ...form.value })
-  }
-}
+  const props = defineProps<Props>();
+  const emit = defineEmits<{
+    close: [];
+    save: [data: CreateCategoryRequest];
+  }>();
 
-watch(() => props.category, (newCategory) => {
-  if (newCategory) {
-    form.value = {
-      name: newCategory.name,
-      type: newCategory.type,
-      color: newCategory.color || '#007BFF'
+  const form = ref<CreateCategoryRequest>({
+    name: '',
+    type: 'expense',
+    color: '#007BFF',
+  });
+
+  const colorPresets = [
+    '#007BFF',
+    '#28a745',
+    '#dc3545',
+    '#ffc107',
+    '#17a2b8',
+    '#6610f2',
+    '#e83e8c',
+    '#fd7e14',
+    '#20c997',
+    '#6c757d',
+  ];
+
+  const isFormValid = computed(() => {
+    return form.value.name.trim() && form.value.type && form.value.color;
+  });
+
+  const handleOverlayClick = (e: Event) => {
+    if (e.target === e.currentTarget) {
+      emit('close');
     }
-  } else {
-    form.value = {
-      name: '',
-      type: 'expense',
-      color: '#007BFF'
+  };
+
+  const handleSubmit = () => {
+    if (isFormValid.value) {
+      emit('save', { ...form.value });
     }
-  }
-}, { immediate: true })
+  };
+
+  watch(
+    () => props.category,
+    newCategory => {
+      if (newCategory) {
+        form.value = {
+          name: newCategory.name,
+          type: newCategory.type,
+          color: newCategory.color || '#007BFF',
+        };
+      } else {
+        form.value = {
+          name: '',
+          type: 'expense',
+          color: '#007BFF',
+        };
+      }
+    },
+    { immediate: true }
+  );
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
 
-.modal {
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: #333;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #999;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-close:hover {
-  color: #333;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-
-.color-input-group {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.form-color {
-  width: 60px;
-  height: 40px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.color-text {
-  flex: 1;
-}
-
-.color-presets {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.color-preset {
-  width: 30px;
-  height: 30px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.color-preset:hover {
-  transform: scale(1.1);
-  border-color: #007BFF;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-@media (max-width: 768px) {
   .modal {
-    width: 95%;
-    margin: 1rem;
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
   }
-  
-  .modal-header,
-  .modal-body {
-    padding: 1rem;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 0 1.5rem;
+    border-bottom: 1px solid #eee;
   }
-  
-  .color-presets {
+
+  .modal-header h3 {
+    margin: 0;
+    color: #333;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
     justify-content: center;
   }
-}
+
+  .modal-close:hover {
+    color: #333;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+  }
+
+  .color-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .form-color {
+    width: 60px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .color-text {
+    flex: 1;
+  }
+
+  .color-presets {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .color-preset {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .color-preset:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .modal {
+      width: 95%;
+      margin: 1rem;
+    }
+
+    .modal-header,
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .color-presets {
+      justify-content: center;
+    }
+  }
 </style>
