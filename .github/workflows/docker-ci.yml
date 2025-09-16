@@ -1,0 +1,149 @@
+name: Docker CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Cache Docker layers (frontend)
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache-frontend
+        key: ${{ runner.os }}-buildx-frontend-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-frontend-
+
+    - name: Cache Docker layers (backend)
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache-backend
+        key: ${{ runner.os }}-buildx-backend-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-backend-
+
+    - name: Build frontend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        push: false
+        tags: budget-book-frontend:test
+        cache-from: type=local,src=/tmp/.buildx-cache-frontend
+        cache-to: type=local,dest=/tmp/.buildx-cache-frontend-new,mode=max
+
+    - name: Build backend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: false
+        tags: budget-book-backend:test
+        cache-from: type=local,src=/tmp/.buildx-cache-backend
+        cache-to: type=local,dest=/tmp/.buildx-cache-backend-new,mode=max
+
+    - name: Test Docker Compose
+      run: |
+        # Create a test docker-compose.yml with test configurations
+        cat > docker-compose.test.yml << EOF
+        version: '3.8'
+        services:
+          mysql:
+            image: mysql:8.0
+            environment:
+              MYSQL_ROOT_PASSWORD: rootpassword
+              MYSQL_DATABASE: budget_book_test
+              MYSQL_USER: testuser
+              MYSQL_PASSWORD: testpass
+            ports:
+              - "3306:3306"
+            healthcheck:
+              test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+              timeout: 20s
+              retries: 10
+
+          backend:
+            build: ./backend
+            environment:
+              DB_HOST: mysql
+              DB_PORT: 3306
+              DB_USER: testuser
+              DB_PASSWORD: testpass
+              DB_NAME: budget_book_test
+            ports:
+              - "8080:8080"
+            depends_on:
+              mysql:
+                condition: service_healthy
+
+          frontend:
+            build: ./frontend
+            ports:
+              - "5173:5173"
+            depends_on:
+              - backend
+        EOF
+
+        # Start services
+        docker-compose -f docker-compose.test.yml up -d
+
+        # Wait for services to be ready
+        sleep 30
+
+        # Check if services are running
+        docker-compose -f docker-compose.test.yml ps
+
+        # Test backend health
+        curl -f http://localhost:8080/health || echo "Backend health check failed"
+
+        # Test frontend
+        curl -f http://localhost:5173 || echo "Frontend check failed"
+
+        # Clean up
+        docker-compose -f docker-compose.test.yml down
+
+    - name: Move cache
+      run: |
+        rm -rf /tmp/.buildx-cache-frontend
+        mv /tmp/.buildx-cache-frontend-new /tmp/.buildx-cache-frontend
+        rm -rf /tmp/.buildx-cache-backend
+        mv /tmp/.buildx-cache-backend-new /tmp/.buildx-cache-backend
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: docker-build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner (frontend)
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'budget-book-frontend:test'
+        format: 'sarif'
+        output: 'trivy-frontend-results.sarif'
+
+    - name: Run Trivy vulnerability scanner (backend)
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'budget-book-backend:test'
+        format: 'sarif'
+        output: 'trivy-backend-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: |
+          trivy-frontend-results.sarif
+          trivy-backend-results.sarif

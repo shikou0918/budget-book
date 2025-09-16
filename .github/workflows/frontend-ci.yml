@@ -1,0 +1,72 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'yarn'
+        cache-dependency-path: frontend/yarn.lock
+
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: yarn install --frozen-lockfile
+
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: frontend/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('frontend/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Run linter
+      working-directory: ./frontend
+      run: yarn lint:check
+
+    - name: Check formatting
+      working-directory: ./frontend
+      run: yarn format:check
+
+    - name: Type check
+      working-directory: ./frontend
+      run: yarn run vue-tsc --noEmit
+
+    - name: Run tests
+      working-directory: ./frontend
+      run: |
+        if yarn run test --version 2>/dev/null; then
+          yarn run test
+        else
+          echo "No tests configured for frontend"
+        fi
+
+    - name: Build application
+      working-directory: ./frontend
+      run: yarn build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-dist
+        path: frontend/dist/
+        retention-days: 7
