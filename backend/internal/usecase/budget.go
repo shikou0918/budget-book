@@ -5,11 +5,13 @@ import (
 	"budget-book/internal/infrastructure/repository"
 )
 
+// BudgetUseCase handles budget business logic
 type BudgetUseCase struct {
 	budgetRepo   *repository.BudgetRepository
 	categoryRepo *repository.CategoryRepository
 }
 
+// NewBudgetUseCase creates a new budget use case instance
 func NewBudgetUseCase(budgetRepo *repository.BudgetRepository, categoryRepo *repository.CategoryRepository) *BudgetUseCase {
 	return &BudgetUseCase{
 		budgetRepo:   budgetRepo,
@@ -17,6 +19,7 @@ func NewBudgetUseCase(budgetRepo *repository.BudgetRepository, categoryRepo *rep
 	}
 }
 
+// CreateBudget creates a new budget with validation
 func (uc *BudgetUseCase) CreateBudget(categoryID uint64, amount float64, targetYear, targetMonth int) (*entity.Budget, error) {
 	category, err := uc.categoryRepo.GetByID(categoryID)
 	if err != nil {
@@ -35,22 +38,27 @@ func (uc *BudgetUseCase) CreateBudget(categoryID uint64, amount float64, targetY
 	return budget, nil
 }
 
+// GetBudgetByID retrieves a budget by its ID
 func (uc *BudgetUseCase) GetBudgetByID(id uint64) (*entity.Budget, error) {
 	return uc.budgetRepo.GetByID(id)
 }
 
+// GetAllBudgets retrieves all budgets
 func (uc *BudgetUseCase) GetAllBudgets() ([]*entity.Budget, error) {
 	return uc.budgetRepo.GetAll()
 }
 
+// GetBudgetsByMonth retrieves budgets for a specific month
 func (uc *BudgetUseCase) GetBudgetsByMonth(year, month int) ([]*entity.Budget, error) {
 	return uc.budgetRepo.GetByMonth(year, month)
 }
 
+// GetBudgetByCategoryAndMonth retrieves a budget for a specific category and month
 func (uc *BudgetUseCase) GetBudgetByCategoryAndMonth(categoryID uint64, year, month int) (*entity.Budget, error) {
 	return uc.budgetRepo.GetByCategoryAndMonth(categoryID, year, month)
 }
 
+// UpdateBudget updates an existing budget with validation
 func (uc *BudgetUseCase) UpdateBudget(id uint64, categoryID uint64, amount float64, targetYear, targetMonth int) (*entity.Budget, error) {
 	budget, err := uc.budgetRepo.GetByID(id)
 	if err != nil {
@@ -78,6 +86,7 @@ func (uc *BudgetUseCase) UpdateBudget(id uint64, categoryID uint64, amount float
 	return budget, nil
 }
 
+// DeleteBudget deletes a budget by its ID
 func (uc *BudgetUseCase) DeleteBudget(id uint64) error {
 	_, err := uc.budgetRepo.GetByID(id)
 	if err != nil {

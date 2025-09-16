@@ -101,7 +101,6 @@
       summary.value = response.data;
     } catch (err) {
       error.value = '月次サマリーの取得に失敗しました';
-      console.error('Error fetching monthly summary:', err);
     } finally {
       loading.value = false;
     }

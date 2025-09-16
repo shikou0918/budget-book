@@ -9,26 +9,31 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// CategoryHandler handles category HTTP requests
 type CategoryHandler struct {
 	usecase *usecase.CategoryUseCase
 }
 
+// CreateCategoryRequest represents the request body for creating a category
 type CreateCategoryRequest struct {
 	Name  string `json:"name" validate:"required,max=50"`
 	Type  string `json:"type" validate:"required,oneof=income expense"`
 	Color string `json:"color"`
 }
 
+// UpdateCategoryRequest represents the request body for updating a category
 type UpdateCategoryRequest struct {
 	Name  string `json:"name" validate:"required,max=50"`
 	Type  string `json:"type" validate:"required,oneof=income expense"`
 	Color string `json:"color"`
 }
 
+// NewCategoryHandler creates a new category handler instance
 func NewCategoryHandler(usecase *usecase.CategoryUseCase) *CategoryHandler {
 	return &CategoryHandler{usecase: usecase}
 }
 
+// CreateCategory handles POST /categories endpoint
 func (h *CategoryHandler) CreateCategory(c echo.Context) error {
 	var req CreateCategoryRequest
 	if err := c.Bind(&req); err != nil {
@@ -48,6 +53,7 @@ func (h *CategoryHandler) CreateCategory(c echo.Context) error {
 	return c.JSON(http.StatusCreated, category)
 }
 
+// GetCategory handles GET /categories/:id endpoint
 func (h *CategoryHandler) GetCategory(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -65,6 +71,7 @@ func (h *CategoryHandler) GetCategory(c echo.Context) error {
 	return c.JSON(http.StatusOK, category)
 }
 
+// GetCategories handles GET /categories endpoint
 func (h *CategoryHandler) GetCategories(c echo.Context) error {
 	categoryType := c.QueryParam("type")
 
@@ -88,6 +95,7 @@ func (h *CategoryHandler) GetCategories(c echo.Context) error {
 	return c.JSON(http.StatusOK, categories)
 }
 
+// UpdateCategory handles PUT /categories/:id endpoint
 func (h *CategoryHandler) UpdateCategory(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -95,12 +103,12 @@ func (h *CategoryHandler) UpdateCategory(c echo.Context) error {
 	}
 
 	var req UpdateCategoryRequest
-	if err := c.Bind(&req); err != nil {
+	if bindErr := c.Bind(&req); bindErr != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 	}
 
-	if err := c.Validate(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	if validErr := c.Validate(&req); validErr != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": validErr.Error()})
 	}
 
 	categoryType := entity.CategoryType(req.Type)
@@ -115,6 +123,7 @@ func (h *CategoryHandler) UpdateCategory(c echo.Context) error {
 	return c.JSON(http.StatusOK, category)
 }
 
+// DeleteCategory handles DELETE /categories/:id endpoint
 func (h *CategoryHandler) DeleteCategory(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {

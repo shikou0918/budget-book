@@ -8,14 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// BudgetRepository handles budget data operations
 type BudgetRepository struct {
 	db *gorm.DB
 }
 
+// NewBudgetRepository creates a new budget repository instance
 func NewBudgetRepository(db *gorm.DB) *BudgetRepository {
 	return &BudgetRepository{db: db}
 }
 
+// Create saves a new budget to the database
 func (r *BudgetRepository) Create(budget *entity.Budget) error {
 	if err := budget.IsValid(); err != nil {
 		return err
@@ -37,6 +40,7 @@ func (r *BudgetRepository) Create(budget *entity.Budget) error {
 	return nil
 }
 
+// GetByID retrieves a budget by its ID
 func (r *BudgetRepository) GetByID(id uint64) (*entity.Budget, error) {
 	var budget entity.Budget
 	result := r.db.Preload("Category").First(&budget, id)
@@ -50,6 +54,7 @@ func (r *BudgetRepository) GetByID(id uint64) (*entity.Budget, error) {
 	return &budget, nil
 }
 
+// GetAll retrieves all budgets ordered by target year and month
 func (r *BudgetRepository) GetAll() ([]*entity.Budget, error) {
 	var budgets []*entity.Budget
 	result := r.db.Preload("Category").Order("target_year DESC, target_month DESC").Find(&budgets)
@@ -60,6 +65,7 @@ func (r *BudgetRepository) GetAll() ([]*entity.Budget, error) {
 	return budgets, nil
 }
 
+// GetByMonth retrieves all budgets for a specific year and month
 func (r *BudgetRepository) GetByMonth(year, month int) ([]*entity.Budget, error) {
 	var budgets []*entity.Budget
 	result := r.db.Preload("Category").
@@ -72,6 +78,7 @@ func (r *BudgetRepository) GetByMonth(year, month int) ([]*entity.Budget, error)
 	return budgets, nil
 }
 
+// GetByCategoryAndMonth retrieves a budget by category ID and target month
 func (r *BudgetRepository) GetByCategoryAndMonth(categoryID uint64, year, month int) (*entity.Budget, error) {
 	var budget entity.Budget
 	result := r.db.Preload("Category").
@@ -87,6 +94,7 @@ func (r *BudgetRepository) GetByCategoryAndMonth(categoryID uint64, year, month 
 	return &budget, nil
 }
 
+// Update modifies an existing budget in the database
 func (r *BudgetRepository) Update(budget *entity.Budget) error {
 	if err := budget.IsValid(); err != nil {
 		return err
@@ -105,6 +113,7 @@ func (r *BudgetRepository) Update(budget *entity.Budget) error {
 	return nil
 }
 
+// Delete removes a budget from the database by ID
 func (r *BudgetRepository) Delete(id uint64) error {
 	result := r.db.Delete(&entity.Budget{}, id)
 	if result.Error != nil {
@@ -118,6 +127,7 @@ func (r *BudgetRepository) Delete(id uint64) error {
 	return nil
 }
 
+// ExistsByCategoryAndMonth checks if a budget exists for a category in a specific month
 func (r *BudgetRepository) ExistsByCategoryAndMonth(categoryID uint64, year, month int) (bool, error) {
 	var count int64
 	result := r.db.Model(&entity.Budget{}).

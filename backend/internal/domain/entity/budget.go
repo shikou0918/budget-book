@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Budget represents a budget for a specific category and month
 type Budget struct {
 	ID          uint64    `json:"id"`
 	CategoryID  uint64    `json:"category_id"`
@@ -15,6 +16,7 @@ type Budget struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// NewBudget creates a new budget instance
 func NewBudget(categoryID uint64, amount float64, targetYear, targetMonth int) *Budget {
 	return &Budget{
 		CategoryID:  categoryID,
@@ -26,6 +28,7 @@ func NewBudget(categoryID uint64, amount float64, targetYear, targetMonth int) *
 	}
 }
 
+// IsValid validates the budget data
 func (b *Budget) IsValid() error {
 	if b.CategoryID == 0 {
 		return NewValidationError("category_id is required")

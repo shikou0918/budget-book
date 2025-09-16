@@ -9,10 +9,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// BudgetHandler handles budget HTTP requests
 type BudgetHandler struct {
 	usecase *usecase.BudgetUseCase
 }
 
+// CreateBudgetRequest represents the request body for creating a budget
 type CreateBudgetRequest struct {
 	CategoryID  uint64  `json:"category_id" validate:"required"`
 	Amount      float64 `json:"amount" validate:"required,gt=0"`
@@ -20,6 +22,7 @@ type CreateBudgetRequest struct {
 	TargetMonth int     `json:"target_month" validate:"required,min=1,max=12"`
 }
 
+// UpdateBudgetRequest represents the request body for updating a budget
 type UpdateBudgetRequest struct {
 	CategoryID  uint64  `json:"category_id" validate:"required"`
 	Amount      float64 `json:"amount" validate:"required,gt=0"`
@@ -27,10 +30,12 @@ type UpdateBudgetRequest struct {
 	TargetMonth int     `json:"target_month" validate:"required,min=1,max=12"`
 }
 
+// NewBudgetHandler creates a new budget handler instance
 func NewBudgetHandler(usecase *usecase.BudgetUseCase) *BudgetHandler {
 	return &BudgetHandler{usecase: usecase}
 }
 
+// CreateBudget handles POST /budgets endpoint
 func (h *BudgetHandler) CreateBudget(c echo.Context) error {
 	var req CreateBudgetRequest
 	if err := c.Bind(&req); err != nil {
@@ -49,6 +54,7 @@ func (h *BudgetHandler) CreateBudget(c echo.Context) error {
 	return c.JSON(http.StatusCreated, budget)
 }
 
+// GetBudget handles GET /budgets/:id endpoint
 func (h *BudgetHandler) GetBudget(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -66,6 +72,7 @@ func (h *BudgetHandler) GetBudget(c echo.Context) error {
 	return c.JSON(http.StatusOK, budget)
 }
 
+// GetBudgets handles GET /budgets endpoint
 func (h *BudgetHandler) GetBudgets(c echo.Context) error {
 	yearParam := c.QueryParam("year")
 	monthParam := c.QueryParam("month")
@@ -100,6 +107,7 @@ func (h *BudgetHandler) GetBudgets(c echo.Context) error {
 	return c.JSON(http.StatusOK, budgets)
 }
 
+// UpdateBudget handles PUT /budgets/:id endpoint
 func (h *BudgetHandler) UpdateBudget(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -107,12 +115,12 @@ func (h *BudgetHandler) UpdateBudget(c echo.Context) error {
 	}
 
 	var req UpdateBudgetRequest
-	if err := c.Bind(&req); err != nil {
+	if bindErr := c.Bind(&req); bindErr != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 	}
 
-	if err := c.Validate(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	if validErr := c.Validate(&req); validErr != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": validErr.Error()})
 	}
 
 	budget, err := h.usecase.UpdateBudget(id, req.CategoryID, req.Amount, req.TargetYear, req.TargetMonth)
@@ -126,6 +134,7 @@ func (h *BudgetHandler) UpdateBudget(c echo.Context) error {
 	return c.JSON(http.StatusOK, budget)
 }
 
+// DeleteBudget handles DELETE /budgets/:id endpoint
 func (h *BudgetHandler) DeleteBudget(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {

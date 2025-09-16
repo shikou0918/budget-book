@@ -8,14 +8,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// SummaryHandler handles summary HTTP requests
 type SummaryHandler struct {
 	usecase *usecase.SummaryUseCase
 }
 
+// NewSummaryHandler creates a new summary handler instance
 func NewSummaryHandler(usecase *usecase.SummaryUseCase) *SummaryHandler {
 	return &SummaryHandler{usecase: usecase}
 }
 
+// GetMonthlySummary handles GET /summary/:year/:month endpoint
 func (h *SummaryHandler) GetMonthlySummary(c echo.Context) error {
 	year, err := strconv.Atoi(c.Param("year"))
 	if err != nil {

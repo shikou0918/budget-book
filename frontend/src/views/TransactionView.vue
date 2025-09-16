@@ -101,7 +101,6 @@
       try {
         await transactionStore.deleteTransaction(id);
       } catch (err) {
-        console.error('Error deleting transaction:', err);
       }
     }
   };
@@ -121,7 +120,6 @@
       }
       closeModal();
     } catch (err) {
-      console.error('Error saving transaction:', err);
     }
   };
 

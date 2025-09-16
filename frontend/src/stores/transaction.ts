@@ -16,7 +16,6 @@ export const useTransactionStore = defineStore('transaction', () => {
       transactions.value = response.data;
     } catch (err) {
       error.value = 'Failed to fetch transactions';
-      console.error('Error fetching transactions:', err);
     } finally {
       loading.value = false;
     }
@@ -31,7 +30,6 @@ export const useTransactionStore = defineStore('transaction', () => {
       return response.data;
     } catch (err) {
       error.value = 'Failed to create transaction';
-      console.error('Error creating transaction:', err);
       throw err;
     } finally {
       loading.value = false;
@@ -50,7 +48,6 @@ export const useTransactionStore = defineStore('transaction', () => {
       return response.data;
     } catch (err) {
       error.value = 'Failed to update transaction';
-      console.error('Error updating transaction:', err);
       throw err;
     } finally {
       loading.value = false;
@@ -65,7 +62,6 @@ export const useTransactionStore = defineStore('transaction', () => {
       transactions.value = transactions.value.filter(t => t.id !== id);
     } catch (err) {
       error.value = 'Failed to delete transaction';
-      console.error('Error deleting transaction:', err);
       throw err;
     } finally {
       loading.value = false;

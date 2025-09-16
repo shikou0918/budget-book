@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// Config holds database connection configuration
 type Config struct {
 	Host     string
 	Port     string
@@ -18,6 +19,7 @@ type Config struct {
 	Name     string
 }
 
+// NewConnection establishes a new database connection with retry logic
 func NewConnection(config *Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.User,

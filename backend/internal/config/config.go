@@ -4,11 +4,13 @@ import (
 	"os"
 )
 
+// Config holds the application configuration
 type Config struct {
 	DB     DBConfig
 	Server ServerConfig
 }
 
+// DBConfig holds database connection configuration
 type DBConfig struct {
 	Host     string
 	Port     string
@@ -17,10 +19,12 @@ type DBConfig struct {
 	Name     string
 }
 
+// ServerConfig holds server configuration
 type ServerConfig struct {
 	Port string
 }
 
+// Load loads configuration from environment variables
 func Load() *Config {
 	return &Config{
 		DB: DBConfig{

@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// CORS returns a middleware that adds CORS headers
 func CORS() echo.MiddlewareFunc {
 	return middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:5173", "http://localhost:3000"},

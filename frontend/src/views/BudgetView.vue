@@ -70,7 +70,6 @@
       budgets.value = response.data;
     } catch (err) {
       error.value = '予算の取得に失敗しました';
-      console.error('Error fetching budgets:', err);
     } finally {
       loading.value = false;
     }
@@ -88,7 +87,6 @@
         budgets.value = budgets.value.filter(b => b.id !== id);
       } catch (err) {
         alert('予算の削除に失敗しました');
-        console.error('Error deleting budget:', err);
       }
     }
   };
@@ -114,7 +112,6 @@
       closeModal();
     } catch (err) {
       alert('予算の保存に失敗しました');
-      console.error('Error saving budget:', err);
     }
   };
 

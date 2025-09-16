@@ -4,13 +4,17 @@ import (
 	"time"
 )
 
+// CategoryType represents the type of category (income or expense)
 type CategoryType string
 
 const (
-	CategoryTypeIncome  CategoryType = "income"
+	// CategoryTypeIncome represents income categories
+	CategoryTypeIncome CategoryType = "income"
+	// CategoryTypeExpense represents expense categories
 	CategoryTypeExpense CategoryType = "expense"
 )
 
+// Category represents a transaction category
 type Category struct {
 	ID        uint64       `json:"id"`
 	Name      string       `json:"name"`
@@ -20,6 +24,7 @@ type Category struct {
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
+// NewCategory creates a new category instance
 func NewCategory(name string, categoryType CategoryType, color string) *Category {
 	if color == "" {
 		color = "#007BFF"
@@ -33,6 +38,7 @@ func NewCategory(name string, categoryType CategoryType, color string) *Category
 	}
 }
 
+// IsValid validates the category data
 func (c *Category) IsValid() error {
 	if c.Name == "" {
 		return NewValidationError("name is required")

@@ -97,7 +97,6 @@
       }
       closeModal();
     } catch (err) {
-      console.error('Error saving category:', err);
     }
   };
 

@@ -10,10 +10,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// TransactionHandler handles transaction HTTP requests
 type TransactionHandler struct {
 	usecase *usecase.TransactionUseCase
 }
 
+// CreateTransactionRequest represents the request body for creating a transaction
 type CreateTransactionRequest struct {
 	Type            string  `json:"type" validate:"required,oneof=income expense"`
 	Amount          float64 `json:"amount" validate:"required,gt=0"`
@@ -22,6 +24,7 @@ type CreateTransactionRequest struct {
 	Memo            string  `json:"memo"`
 }
 
+// UpdateTransactionRequest represents the request body for updating a transaction
 type UpdateTransactionRequest struct {
 	Type            string  `json:"type" validate:"required,oneof=income expense"`
 	Amount          float64 `json:"amount" validate:"required,gt=0"`
@@ -30,10 +33,12 @@ type UpdateTransactionRequest struct {
 	Memo            string  `json:"memo"`
 }
 
+// NewTransactionHandler creates a new transaction handler instance
 func NewTransactionHandler(usecase *usecase.TransactionUseCase) *TransactionHandler {
 	return &TransactionHandler{usecase: usecase}
 }
 
+// CreateTransaction handles POST /transactions endpoint
 func (h *TransactionHandler) CreateTransaction(c echo.Context) error {
 	var req CreateTransactionRequest
 	if err := c.Bind(&req); err != nil {
@@ -58,6 +63,7 @@ func (h *TransactionHandler) CreateTransaction(c echo.Context) error {
 	return c.JSON(http.StatusCreated, transaction)
 }
 
+// GetTransaction handles GET /transactions/:id endpoint
 func (h *TransactionHandler) GetTransaction(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -75,6 +81,7 @@ func (h *TransactionHandler) GetTransaction(c echo.Context) error {
 	return c.JSON(http.StatusOK, transaction)
 }
 
+// GetTransactions handles GET /transactions endpoint
 func (h *TransactionHandler) GetTransactions(c echo.Context) error {
 	transactions, err := h.usecase.GetAllTransactions()
 	if err != nil {
@@ -84,6 +91,7 @@ func (h *TransactionHandler) GetTransactions(c echo.Context) error {
 	return c.JSON(http.StatusOK, transactions)
 }
 
+// UpdateTransaction handles PUT /transactions/:id endpoint
 func (h *TransactionHandler) UpdateTransaction(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -91,12 +99,12 @@ func (h *TransactionHandler) UpdateTransaction(c echo.Context) error {
 	}
 
 	var req UpdateTransactionRequest
-	if err := c.Bind(&req); err != nil {
+	if bindErr := c.Bind(&req); bindErr != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 	}
 
-	if err := c.Validate(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	if validErr := c.Validate(&req); validErr != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": validErr.Error()})
 	}
 
 	transactionDate, err := time.Parse("2006-01-02", req.TransactionDate)
@@ -116,6 +124,7 @@ func (h *TransactionHandler) UpdateTransaction(c echo.Context) error {
 	return c.JSON(http.StatusOK, transaction)
 }
 
+// DeleteTransaction handles DELETE /transactions/:id endpoint
 func (h *TransactionHandler) DeleteTransaction(c echo.Context) error {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {

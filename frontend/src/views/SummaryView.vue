@@ -143,7 +143,6 @@
       summary.value = response.data;
     } catch (err) {
       error.value = 'サマリーの取得に失敗しました';
-      console.error('Error fetching summary:', err);
     } finally {
       loading.value = false;
     }

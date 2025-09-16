@@ -16,7 +16,6 @@ export const useCategoryStore = defineStore('category', () => {
       categories.value = response.data;
     } catch (err) {
       error.value = 'Failed to fetch categories';
-      console.error('Error fetching categories:', err);
     } finally {
       loading.value = false;
     }
@@ -30,7 +29,6 @@ export const useCategoryStore = defineStore('category', () => {
       return response.data;
     } catch (err) {
       error.value = 'Failed to fetch categories';
-      console.error('Error fetching categories by type:', err);
       return [];
     } finally {
       loading.value = false;
@@ -46,7 +44,6 @@ export const useCategoryStore = defineStore('category', () => {
       return response.data;
     } catch (err) {
       error.value = 'Failed to create category';
-      console.error('Error creating category:', err);
       throw err;
     } finally {
       loading.value = false;
@@ -65,7 +62,6 @@ export const useCategoryStore = defineStore('category', () => {
       return response.data;
     } catch (err) {
       error.value = 'Failed to update category';
-      console.error('Error updating category:', err);
       throw err;
     } finally {
       loading.value = false;
@@ -80,7 +76,6 @@ export const useCategoryStore = defineStore('category', () => {
       categories.value = categories.value.filter(c => c.id !== id);
     } catch (err) {
       error.value = 'Failed to delete category';
-      console.error('Error deleting category:', err);
       throw err;
     } finally {
       loading.value = false;

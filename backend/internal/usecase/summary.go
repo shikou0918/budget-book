@@ -5,12 +5,14 @@ import (
 	"budget-book/internal/infrastructure/repository"
 )
 
+// SummaryUseCase handles summary business logic
 type SummaryUseCase struct {
 	transactionRepo *repository.TransactionRepository
 	categoryRepo    *repository.CategoryRepository
 	budgetRepo      *repository.BudgetRepository
 }
 
+// NewSummaryUseCase creates a new summary use case instance
 func NewSummaryUseCase(transactionRepo *repository.TransactionRepository, categoryRepo *repository.CategoryRepository, budgetRepo *repository.BudgetRepository) *SummaryUseCase {
 	return &SummaryUseCase{
 		transactionRepo: transactionRepo,
@@ -19,6 +21,7 @@ func NewSummaryUseCase(transactionRepo *repository.TransactionRepository, catego
 	}
 }
 
+// GetMonthlySummary generates a comprehensive monthly summary with transactions and budgets
 func (uc *SummaryUseCase) GetMonthlySummary(year, month int) (*entity.MonthlySummary, error) {
 	summary := entity.NewMonthlySummary(year, month)
 
@@ -56,6 +59,7 @@ func (uc *SummaryUseCase) GetMonthlySummary(year, month int) (*entity.MonthlySum
 	return summary, nil
 }
 
+// GetCategoryTotals calculates total amounts per category for a specific month
 func (uc *SummaryUseCase) GetCategoryTotals(year, month int) (map[uint64]float64, error) {
 	transactions, err := uc.transactionRepo.GetByMonth(year, month)
 	if err != nil {

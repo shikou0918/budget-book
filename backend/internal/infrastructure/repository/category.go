@@ -8,14 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// CategoryRepository handles category data operations
 type CategoryRepository struct {
 	db *gorm.DB
 }
 
+// NewCategoryRepository creates a new category repository instance
 func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
 	return &CategoryRepository{db: db}
 }
 
+// Create saves a new category to the database
 func (r *CategoryRepository) Create(category *entity.Category) error {
 	if err := category.IsValid(); err != nil {
 		return err
@@ -37,6 +40,7 @@ func (r *CategoryRepository) Create(category *entity.Category) error {
 	return nil
 }
 
+// GetByID retrieves a category by its ID
 func (r *CategoryRepository) GetByID(id uint64) (*entity.Category, error) {
 	var category entity.Category
 	result := r.db.First(&category, id)
@@ -50,6 +54,7 @@ func (r *CategoryRepository) GetByID(id uint64) (*entity.Category, error) {
 	return &category, nil
 }
 
+// GetAll retrieves all categories ordered by type and name
 func (r *CategoryRepository) GetAll() ([]*entity.Category, error) {
 	var categories []*entity.Category
 	result := r.db.Order("type ASC, name ASC").Find(&categories)
@@ -60,6 +65,7 @@ func (r *CategoryRepository) GetAll() ([]*entity.Category, error) {
 	return categories, nil
 }
 
+// GetByType retrieves all categories of a specific type
 func (r *CategoryRepository) GetByType(categoryType entity.CategoryType) ([]*entity.Category, error) {
 	var categories []*entity.Category
 	result := r.db.Where("type = ?", categoryType).Order("name ASC").Find(&categories)
@@ -70,6 +76,7 @@ func (r *CategoryRepository) GetByType(categoryType entity.CategoryType) ([]*ent
 	return categories, nil
 }
 
+// Update modifies an existing category in the database
 func (r *CategoryRepository) Update(category *entity.Category) error {
 	if err := category.IsValid(); err != nil {
 		return err
@@ -88,6 +95,7 @@ func (r *CategoryRepository) Update(category *entity.Category) error {
 	return nil
 }
 
+// Delete removes a category from the database by ID
 func (r *CategoryRepository) Delete(id uint64) error {
 	var transactionCount int64
 	r.db.Model(&entity.Transaction{}).Where("category_id = ?", id).Count(&transactionCount)
@@ -107,6 +115,7 @@ func (r *CategoryRepository) Delete(id uint64) error {
 	return nil
 }
 
+// ExistsByNameAndType checks if a category exists with the given name and type
 func (r *CategoryRepository) ExistsByNameAndType(name string, categoryType entity.CategoryType) (bool, error) {
 	var count int64
 	result := r.db.Model(&entity.Category{}).Where("name = ? AND type = ?", name, categoryType).Count(&count)
