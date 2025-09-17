@@ -1,12 +1,12 @@
 package main
 
 import (
-	"budget-book/internal/config"
-	"budget-book/internal/infrastructure/database"
-	infraRepo "budget-book/internal/infrastructure/repository"
-	"budget-book/internal/interface/handler"
-	"budget-book/internal/interface/middleware"
-	"budget-book/internal/usecase"
+	"budget-book/config"
+	"budget-book/infrastructure/database"
+	infraRepo "budget-book/infrastructure/repository"
+	"budget-book/interface/handler"
+	"budget-book/interface/middleware"
+	"budget-book/usecase"
 	"log"
 
 	"github.com/labstack/echo/v4"
