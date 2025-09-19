@@ -101,6 +101,8 @@
       try {
         await transactionStore.deleteTransaction(id);
       } catch (err) {
+        console.error('取引の削除に失敗しました:', err);
+        alert('取引の削除に失敗しました。');
       }
     }
   };
@@ -120,6 +122,8 @@
       }
       closeModal();
     } catch (err) {
+      console.error('取引の保存に失敗しました:', err);
+      alert('取引の保存に失敗しました。');
     }
   };
 

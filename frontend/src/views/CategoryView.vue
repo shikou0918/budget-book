@@ -58,7 +58,7 @@
   import type { Category, CreateCategoryRequest } from '@/types';
 
   const categoryStore = useCategoryStore();
-  const { categories, loading, error } = categoryStore;
+  const { loading, error } = categoryStore;
 
   const showCreateModal = ref(false);
   const showEditModal = ref(false);
@@ -97,6 +97,8 @@
       }
       closeModal();
     } catch (err) {
+      console.error('カテゴリの保存に失敗しました:', err);
+      alert('カテゴリの保存に失敗しました。');
     }
   };
 
