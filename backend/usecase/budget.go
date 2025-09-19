@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"budget-book/domain/entity"
+	"budget-book/entity"
 	"budget-book/infrastructure/repository"
 )
 

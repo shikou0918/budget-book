@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"budget-book/domain/entity"
+	"budget-book/entity"
 	"budget-book/usecase"
 	"net/http"
 	"strconv"

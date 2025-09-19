@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"budget-book/domain/entity"
+	"budget-book/entity"
 	"fmt"
 	"time"
 
