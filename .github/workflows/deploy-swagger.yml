@@ -1,0 +1,145 @@
+name: Deploy Swagger UI to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'openapi.yml'
+      - '.github/workflows/deploy-swagger.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'openapi.yml'
+      - '.github/workflows/deploy-swagger.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Create Swagger UI
+        run: |
+          # Create docs directory
+          mkdir -p docs
+
+          # Download Swagger UI
+          curl -L -o swagger-ui.zip https://github.com/swagger-api/swagger-ui/archive/refs/tags/v5.10.3.zip
+          unzip swagger-ui.zip
+
+          # Copy Swagger UI dist files
+          cp -r swagger-ui-5.10.3/dist/* docs/
+
+          # Copy our API spec
+          cp openapi.yml docs/
+
+          # Create index.html with our API spec
+          cat > docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="ja">
+          <head>
+            <meta charset="UTF-8">
+            <title>Budget Book API Documentation</title>
+            <link rel="stylesheet" type="text/css" href="./swagger-ui-bundle.css" />
+            <link rel="stylesheet" type="text/css" href="./swagger-ui.css" />
+            <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+            <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+          </head>
+          <body>
+            <div id="swagger-ui"></div>
+            <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
+            <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+            <script>
+            window.onload = function() {
+              const ui = SwaggerUIBundle({
+                url: './openapi.yml',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                  SwaggerUIBundle.presets.apis,
+                  SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                  SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                validatorUrl: null,
+                tryItOutEnabled: true,
+                supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+                onComplete: function() {
+                  console.log("Swagger UI loaded");
+                },
+                onFailure: function(data) {
+                  console.log("Failed to load API: ", data);
+                }
+              });
+
+              window.ui = ui;
+            };
+            </script>
+          </body>
+          </html>
+          EOF
+
+          # Create custom CSS for Japanese support
+          cat > docs/custom.css << 'EOF'
+          /* Custom styles for Budget Book API documentation */
+          .swagger-ui {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
+          }
+
+          .swagger-ui .info .title {
+            color: #3b4151;
+            font-size: 36px;
+            font-weight: 600;
+            margin: 0;
+          }
+
+          .swagger-ui .info .description {
+            font-size: 16px;
+            margin: 20px 0;
+          }
+
+          .swagger-ui .scheme-container {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+          }
+
+          /* Japanese font optimization */
+          .swagger-ui .opblock .opblock-summary-description,
+          .swagger-ui .opblock .opblock-description-wrapper p,
+          .swagger-ui .parameter__name,
+          .swagger-ui .parameter__type {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
+          }
+          EOF
+
+          # Update index.html to include custom CSS
+          sed -i 's|</head>|    <link rel="stylesheet" type="text/css" href="./custom.css" />\n  </head>|' docs/index.html
+
+          # Clean up
+          rm -rf swagger-ui-5.10.3 swagger-ui.zip
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+
+  # Deployment job (only on main branch)
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
