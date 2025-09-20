@@ -16,11 +16,16 @@ RUN go build -o main cmd/api/main.go
 
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
+RUN apk --no-cache add ca-certificates mysql-client netcat-openbsd
+WORKDIR /app
 
 COPY --from=builder /app/main .
+COPY migrations/ ./migrations/
+COPY entrypoint.sh .
+
+RUN chmod +x entrypoint.sh
 
 EXPOSE 8080
 
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["./main"]
