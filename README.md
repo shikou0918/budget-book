@@ -159,7 +159,3 @@ atlas migrate apply --url "mysql://root:password@localhost:3306/budget_book"
 - ✅ レスポンシブデザイン
 - ✅ データのバリデーション
 - ✅ REST API
-
-## ライセンス
-
-このプロジェクトはプライベートプロジェクトです。
