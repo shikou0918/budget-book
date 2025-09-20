@@ -1,0 +1,967 @@
+openapi: 3.0.3
+info:
+  title: Budget Book API
+  description: 家計簿管理アプリケーションのAPI仕様書
+  version: 1.0.0
+  contact:
+    name: Budget Book API Support
+servers:
+  - url: http://localhost:8080/api
+    description: Development server
+
+paths:
+  # Transaction endpoints
+  /transactions:
+    get:
+      summary: 取引一覧取得
+      description: すべての取引の一覧を取得します
+      operationId: getTransactions
+      tags:
+        - Transactions
+      responses:
+        '200':
+          description: 取引一覧の取得成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: 取引作成
+      description: 新しい取引を作成します
+      operationId: createTransaction
+      tags:
+        - Transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '201':
+          description: 取引作成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: リクエストデータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /transactions/{id}:
+    get:
+      summary: 取引詳細取得
+      description: 指定されたIDの取引詳細を取得します
+      operationId: getTransaction
+      tags:
+        - Transactions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 取引ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取引詳細の取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '404':
+          description: 取引が見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: 取引更新
+      description: 指定されたIDの取引を更新します
+      operationId: updateTransaction
+      tags:
+        - Transactions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 取引ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransactionRequest'
+      responses:
+        '200':
+          description: 取引更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: リクエストデータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: 取引が見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: 取引削除
+      description: 指定されたIDの取引を削除します
+      operationId: deleteTransaction
+      tags:
+        - Transactions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 取引ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 取引削除成功
+        '404':
+          description: 取引が見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Category endpoints
+  /categories:
+    get:
+      summary: カテゴリ一覧取得
+      description: すべてのカテゴリの一覧を取得します
+      operationId: getCategories
+      tags:
+        - Categories
+      responses:
+        '200':
+          description: カテゴリ一覧の取得成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: カテゴリ作成
+      description: 新しいカテゴリを作成します
+      operationId: createCategory
+      tags:
+        - Categories
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '201':
+          description: カテゴリ作成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: リクエストデータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /categories/{id}:
+    get:
+      summary: カテゴリ詳細取得
+      description: 指定されたIDのカテゴリ詳細を取得します
+      operationId: getCategory
+      tags:
+        - Categories
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: カテゴリID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: カテゴリ詳細の取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: カテゴリが見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: カテゴリ更新
+      description: 指定されたIDのカテゴリを更新します
+      operationId: updateCategory
+      tags:
+        - Categories
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: カテゴリID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryRequest'
+      responses:
+        '200':
+          description: カテゴリ更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: リクエストデータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: カテゴリが見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: カテゴリ削除
+      description: 指定されたIDのカテゴリを削除します
+      operationId: deleteCategory
+      tags:
+        - Categories
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: カテゴリID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: カテゴリ削除成功
+        '404':
+          description: カテゴリが見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Budget endpoints
+  /budgets:
+    get:
+      summary: 予算一覧取得
+      description: すべての予算の一覧を取得します
+      operationId: getBudgets
+      tags:
+        - Budgets
+      responses:
+        '200':
+          description: 予算一覧の取得成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Budget'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: 予算作成
+      description: 新しい予算を作成します
+      operationId: createBudget
+      tags:
+        - Budgets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBudgetRequest'
+      responses:
+        '201':
+          description: 予算作成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Budget'
+        '400':
+          description: リクエストデータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /budgets/{id}:
+    get:
+      summary: 予算詳細取得
+      description: 指定されたIDの予算詳細を取得します
+      operationId: getBudget
+      tags:
+        - Budgets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 予算ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 予算詳細の取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Budget'
+        '404':
+          description: 予算が見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: 予算更新
+      description: 指定されたIDの予算を更新します
+      operationId: updateBudget
+      tags:
+        - Budgets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 予算ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBudgetRequest'
+      responses:
+        '200':
+          description: 予算更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Budget'
+        '400':
+          description: リクエストデータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: 予算が見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: 予算削除
+      description: 指定されたIDの予算を削除します
+      operationId: deleteBudget
+      tags:
+        - Budgets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 予算ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 予算削除成功
+        '404':
+          description: 予算が見つかりません
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Summary endpoints
+  /summary/{year}/{month}:
+    get:
+      summary: 月次サマリー取得
+      description: 指定された年月の月次サマリーを取得します
+      operationId: getMonthlySummary
+      tags:
+        - Summary
+      parameters:
+        - name: year
+          in: path
+          required: true
+          description: 年（YYYY形式）
+          schema:
+            type: integer
+            minimum: 1900
+            maximum: 2100
+        - name: month
+          in: path
+          required: true
+          description: 月（1-12）
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        '200':
+          description: 月次サマリーの取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySummary'
+        '400':
+          description: パラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    # Entity schemas
+    Transaction:
+      type: object
+      required:
+        - id
+        - type
+        - amount
+        - category_id
+        - transaction_date
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 取引ID
+          example: 1
+        type:
+          type: string
+          enum: [income, expense]
+          description: 取引タイプ
+          example: expense
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 金額
+          example: 1500.00
+        category_id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        category:
+          $ref: '#/components/schemas/Category'
+        transaction_date:
+          type: string
+          format: date-time
+          description: 取引日時
+          example: "2023-12-01T10:30:00Z"
+        memo:
+          type: string
+          description: メモ
+          example: "ランチ代"
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: "2023-12-01T10:30:00Z"
+
+    Category:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        name:
+          type: string
+          maxLength: 50
+          description: カテゴリ名
+          example: "食費"
+        type:
+          type: string
+          enum: [income, expense]
+          description: カテゴリタイプ
+          example: expense
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          description: カテゴリの色（HEXカラーコード）
+          example: "#FF5733"
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: "2023-12-01T10:30:00Z"
+
+    Budget:
+      type: object
+      required:
+        - id
+        - category_id
+        - amount
+        - target_year
+        - target_month
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 予算ID
+          example: 1
+        category_id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        category:
+          $ref: '#/components/schemas/Category'
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 予算金額
+          example: 50000.00
+        target_year:
+          type: integer
+          minimum: 1900
+          maximum: 2100
+          description: 対象年
+          example: 2023
+        target_month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: 対象月
+          example: 12
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: "2023-12-01T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: "2023-12-01T10:30:00Z"
+
+    MonthlySummary:
+      type: object
+      required:
+        - year
+        - month
+        - total_income
+        - total_expense
+        - balance
+        - category_summary
+      properties:
+        year:
+          type: integer
+          description: 年
+          example: 2023
+        month:
+          type: integer
+          description: 月
+          example: 12
+        total_income:
+          type: number
+          format: double
+          description: 総収入
+          example: 300000.00
+        total_expense:
+          type: number
+          format: double
+          description: 総支出
+          example: 250000.00
+        balance:
+          type: number
+          format: double
+          description: 収支
+          example: 50000.00
+        category_summary:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CategorySummary'
+          description: カテゴリ別サマリー
+
+    CategorySummary:
+      type: object
+      required:
+        - category_id
+        - category_name
+        - category_type
+        - total
+        - budget
+        - percentage
+      properties:
+        category_id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        category_name:
+          type: string
+          description: カテゴリ名
+          example: "食費"
+        category_type:
+          type: string
+          description: カテゴリタイプ
+          example: "expense"
+        total:
+          type: number
+          format: double
+          description: 合計金額
+          example: 45000.00
+        budget:
+          type: number
+          format: double
+          description: 予算金額
+          example: 50000.00
+        percentage:
+          type: number
+          format: double
+          description: 予算使用率（%）
+          example: 90.0
+
+    # Request schemas
+    CreateTransactionRequest:
+      type: object
+      required:
+        - type
+        - amount
+        - category_id
+        - transaction_date
+      properties:
+        type:
+          type: string
+          enum: [income, expense]
+          description: 取引タイプ
+          example: expense
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 金額
+          example: 1500.00
+        category_id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        transaction_date:
+          type: string
+          format: date-time
+          description: 取引日時
+          example: "2023-12-01T10:30:00Z"
+        memo:
+          type: string
+          description: メモ
+          example: "ランチ代"
+
+    UpdateTransactionRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [income, expense]
+          description: 取引タイプ
+          example: expense
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 金額
+          example: 1500.00
+        category_id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        transaction_date:
+          type: string
+          format: date-time
+          description: 取引日時
+          example: "2023-12-01T10:30:00Z"
+        memo:
+          type: string
+          description: メモ
+          example: "ランチ代"
+
+    CreateCategoryRequest:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          description: カテゴリ名
+          example: "食費"
+        type:
+          type: string
+          enum: [income, expense]
+          description: カテゴリタイプ
+          example: expense
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          description: カテゴリの色（HEXカラーコード）
+          example: "#FF5733"
+
+    UpdateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          description: カテゴリ名
+          example: "食費"
+        type:
+          type: string
+          enum: [income, expense]
+          description: カテゴリタイプ
+          example: expense
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          description: カテゴリの色（HEXカラーコード）
+          example: "#FF5733"
+
+    CreateBudgetRequest:
+      type: object
+      required:
+        - category_id
+        - amount
+        - target_year
+        - target_month
+      properties:
+        category_id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 予算金額
+          example: 50000.00
+        target_year:
+          type: integer
+          minimum: 1900
+          maximum: 2100
+          description: 対象年
+          example: 2023
+        target_month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: 対象月
+          example: 12
+
+    UpdateBudgetRequest:
+      type: object
+      properties:
+        category_id:
+          type: integer
+          format: int64
+          description: カテゴリID
+          example: 1
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 予算金額
+          example: 50000.00
+        target_year:
+          type: integer
+          minimum: 1900
+          maximum: 2100
+          description: 対象年
+          example: 2023
+        target_month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: 対象月
+          example: 12
+
+    # Error schema
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: エラーメッセージ
+          example: "Invalid request data"
+        code:
+          type: string
+          description: エラーコード
+          example: "INVALID_REQUEST"
+
+tags:
+  - name: Transactions
+    description: 取引関連のAPI
+  - name: Categories
+    description: カテゴリ関連のAPI
+  - name: Budgets
+    description: 予算関連のAPI
+  - name: Summary
+    description: サマリー関連のAPI
