@@ -9,7 +9,7 @@ echo "MySQL is ready!"
 
 # Run migrations
 echo "Running database migrations..."
-mysql -h mysql -u root -ppassword budget_book < /app/migrations/schema.sql
+mysql -h mysql -u root -ppassword --skip-ssl budget_book < /app/migrations/schema.sql
 
 echo "Starting application..."
 exec "$@"
