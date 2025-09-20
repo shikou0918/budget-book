@@ -34,8 +34,6 @@ services:
       ### DBのヘルスチェック完了までAPIサーバーの起動を待つ
       mysql:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
 
   frontend:
     build:

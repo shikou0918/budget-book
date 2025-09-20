@@ -1,5 +1,5 @@
 -- Create categories table
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     type ENUM('income', 'expense') NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE categories (
 );
 
 -- Create transactions table
-CREATE TABLE transactions (
+CREATE TABLE IF NOT EXISTS transactions (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     type ENUM('income', 'expense') NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE transactions (
 );
 
 -- Create budgets table
-CREATE TABLE budgets (
+CREATE TABLE IF NOT EXISTS budgets (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     category_id BIGINT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE budgets (
 );
 
 -- Insert default categories
-INSERT INTO categories (name, type, color) VALUES
+INSERT IGNORE INTO categories (name, type, color) VALUES
 -- Income categories
 ('給与', 'income', '#28a745'),
 ('副業', 'income', '#17a2b8'),

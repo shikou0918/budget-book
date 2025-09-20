@@ -11,21 +11,21 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Build the application
-RUN go build -o main cmd/api/main.go
+# Build the application with static linking
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o api cmd/api/main.go
 
 FROM alpine:latest
 
 RUN apk --no-cache add ca-certificates mysql-client netcat-openbsd
 WORKDIR /app
 
-COPY --from=builder /app/main .
+COPY --from=builder /app/api /app/api
 COPY migrations/ ./migrations/
-COPY entrypoint.sh .
+COPY entrypoint.sh ./entrypoint.sh
 
-RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint.sh && chmod +x api
 
 EXPOSE 8080
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["./main"]
+CMD ["./api"]
