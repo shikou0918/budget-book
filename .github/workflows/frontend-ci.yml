@@ -69,7 +69,8 @@ jobs:
 
     - name: Check formatting
       working-directory: ./frontend
-      run: yarn format:check`
+      run: yarn format:check
+
   type-check:
     runs-on: ubuntu-latest
     needs: setup
@@ -93,6 +94,7 @@ jobs:
     - name: Type check
       working-directory: ./frontend
       run: yarn run vue-tsc --noEmit
+
   test:
     runs-on: ubuntu-latest
     needs: setup
@@ -121,6 +123,7 @@ jobs:
         else
           echo "No tests configured for frontend"
         fi
+
   build:
     runs-on: ubuntu-latest
     needs: [setup, lint, type-check, test]
