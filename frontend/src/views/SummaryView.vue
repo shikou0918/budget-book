@@ -1,3 +1,70 @@
+<script setup lang="ts">
+  import { ref, computed, onMounted } from 'vue';
+  import { summaryApi } from '@/services/api';
+  import type { MonthlySummary } from '@/types/index';
+
+  const summary = ref<MonthlySummary | null>(null);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+
+  const selectedYear = ref(new Date().getFullYear());
+  const selectedMonth = ref(new Date().getMonth() + 1);
+
+  const years = computed(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
+  });
+
+  const months = [
+    { value: 1, label: '1月' },
+    { value: 2, label: '2月' },
+    { value: 3, label: '3月' },
+    { value: 4, label: '4月' },
+    { value: 5, label: '5月' },
+    { value: 6, label: '6月' },
+    { value: 7, label: '7月' },
+    { value: 8, label: '8月' },
+    { value: 9, label: '9月' },
+    { value: 10, label: '10月' },
+    { value: 11, label: '11月' },
+    { value: 12, label: '12月' },
+  ];
+
+  const categoryDetails = computed(() => {
+    if (!summary.value?.category_summary) return [];
+    return Object.values(summary.value.category_summary)
+      .filter(detail => detail.total > 0)
+      .sort((a, b) => b.total - a.total);
+  });
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('ja-JP').format(num);
+  };
+
+  const getPercentageClass = (percentage: number) => {
+    if (percentage <= 70) return 'percentage-good';
+    if (percentage <= 90) return 'percentage-warning';
+    return 'percentage-danger';
+  };
+
+  const fetchSummary = async () => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await summaryApi.getMonthly(selectedYear.value, selectedMonth.value);
+      summary.value = response.data;
+    } catch (err) {
+      error.value = 'サマリーの取得に失敗しました';
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  onMounted(() => {
+    fetchSummary();
+  });
+</script>
+
 <template>
   <div class="summary">
     <div class="page-header">
@@ -85,73 +152,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
-  import { summaryApi } from '@/services/api';
-  import type { MonthlySummary } from '@/types/index';
-
-  const summary = ref<MonthlySummary | null>(null);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
-
-  const selectedYear = ref(new Date().getFullYear());
-  const selectedMonth = ref(new Date().getMonth() + 1);
-
-  const years = computed(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
-  });
-
-  const months = [
-    { value: 1, label: '1月' },
-    { value: 2, label: '2月' },
-    { value: 3, label: '3月' },
-    { value: 4, label: '4月' },
-    { value: 5, label: '5月' },
-    { value: 6, label: '6月' },
-    { value: 7, label: '7月' },
-    { value: 8, label: '8月' },
-    { value: 9, label: '9月' },
-    { value: 10, label: '10月' },
-    { value: 11, label: '11月' },
-    { value: 12, label: '12月' },
-  ];
-
-  const categoryDetails = computed(() => {
-    if (!summary.value?.category_summary) return [];
-    return Object.values(summary.value.category_summary)
-      .filter(detail => detail.total > 0)
-      .sort((a, b) => b.total - a.total);
-  });
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('ja-JP').format(num);
-  };
-
-  const getPercentageClass = (percentage: number) => {
-    if (percentage <= 70) return 'percentage-good';
-    if (percentage <= 90) return 'percentage-warning';
-    return 'percentage-danger';
-  };
-
-  const fetchSummary = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const response = await summaryApi.getMonthly(selectedYear.value, selectedMonth.value);
-      summary.value = response.data;
-    } catch (err) {
-      error.value = 'サマリーの取得に失敗しました';
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  onMounted(() => {
-    fetchSummary();
-  });
-</script>
 
 <style scoped>
   .summary {

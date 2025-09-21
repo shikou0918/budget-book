@@ -1,56 +1,3 @@
-<template>
-  <div class="categories">
-    <div class="page-header">
-      <h2>カテゴリ管理</h2>
-      <button class="btn btn-primary" @click="showCreateModal = true">新規カテゴリ</button>
-    </div>
-
-    <div class="category-grid">
-      <div class="card">
-        <h3>収入カテゴリ</h3>
-        <div v-if="loading" class="loading">読み込み中...</div>
-        <div v-else-if="error" class="error">{{ error }}</div>
-        <div v-else-if="incomeCategories.length === 0">収入カテゴリがありません</div>
-        <div v-else class="category-list">
-          <div v-for="category in incomeCategories" :key="category.id" class="category-item">
-            <div class="category-color" :style="{ backgroundColor: category.color }"></div>
-            <span class="category-name">{{ category.name }}</span>
-            <div class="category-actions">
-              <button class="btn btn-secondary" @click="editCategory(category)">編集</button>
-              <button class="btn btn-danger" @click="deleteCategory(category.id)">削除</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>支出カテゴリ</h3>
-        <div v-if="loading" class="loading">読み込み中...</div>
-        <div v-else-if="error" class="error">{{ error }}</div>
-        <div v-else-if="expenseCategories.length === 0">支出カテゴリがありません</div>
-        <div v-else class="category-list">
-          <div v-for="category in expenseCategories" :key="category.id" class="category-item">
-            <div class="category-color" :style="{ backgroundColor: category.color }"></div>
-            <span class="category-name">{{ category.name }}</span>
-            <div class="category-actions">
-              <button class="btn btn-secondary" @click="editCategory(category)">編集</button>
-              <button class="btn btn-danger" @click="deleteCategory(category.id)">削除</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <CategoryModal
-      v-if="showCreateModal || showEditModal"
-      :show="showCreateModal || showEditModal"
-      :category="editingCategory"
-      @close="closeModal"
-      @save="handleSave"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { useCategoryStore } from '@/stores/category';
@@ -106,6 +53,59 @@
     categoryStore.fetchCategories();
   });
 </script>
+
+<template>
+  <div class="categories">
+    <div class="page-header">
+      <h2>カテゴリ管理</h2>
+      <button class="btn btn-primary" @click="showCreateModal = true">新規カテゴリ</button>
+    </div>
+
+    <div class="category-grid">
+      <div class="card">
+        <h3>収入カテゴリ</h3>
+        <div v-if="loading" class="loading">読み込み中...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+        <div v-else-if="incomeCategories.length === 0">収入カテゴリがありません</div>
+        <div v-else class="category-list">
+          <div v-for="category in incomeCategories" :key="category.id" class="category-item">
+            <div class="category-color" :style="{ backgroundColor: category.color }"></div>
+            <span class="category-name">{{ category.name }}</span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" @click="editCategory(category)">編集</button>
+              <button class="btn btn-danger" @click="deleteCategory(category.id)">削除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>支出カテゴリ</h3>
+        <div v-if="loading" class="loading">読み込み中...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+        <div v-else-if="expenseCategories.length === 0">支出カテゴリがありません</div>
+        <div v-else class="category-list">
+          <div v-for="category in expenseCategories" :key="category.id" class="category-item">
+            <div class="category-color" :style="{ backgroundColor: category.color }"></div>
+            <span class="category-name">{{ category.name }}</span>
+            <div class="category-actions">
+              <button class="btn btn-secondary" @click="editCategory(category)">編集</button>
+              <button class="btn btn-danger" @click="deleteCategory(category.id)">削除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <CategoryModal
+      v-if="showCreateModal || showEditModal"
+      :show="showCreateModal || showEditModal"
+      :category="editingCategory"
+      @close="closeModal"
+      @save="handleSave"
+    />
+  </div>
+</template>
 
 <style scoped>
   .categories {

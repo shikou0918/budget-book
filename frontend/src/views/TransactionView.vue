@@ -1,3 +1,65 @@
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
+  import { useTransactionStore } from '@/stores/transaction';
+  import TransactionModal from '@/components/transaction/TransactionModal.vue';
+  import type { Transaction, CreateTransactionRequest } from '@/types';
+
+  const transactionStore = useTransactionStore();
+  const { transactions, loading, error } = transactionStore;
+
+  const showCreateModal = ref(false);
+  const showEditModal = ref(false);
+  const editingTransaction = ref<Transaction | null>(null);
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('ja-JP').format(num);
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('ja-JP');
+  };
+
+  const editTransaction = (transaction: Transaction) => {
+    editingTransaction.value = transaction;
+    showEditModal.value = true;
+  };
+
+  const deleteTransaction = async (id: number) => {
+    if (confirm('この取引を削除しますか？')) {
+      try {
+        await transactionStore.deleteTransaction(id);
+      } catch (err) {
+        console.error('取引の削除に失敗しました:', err);
+        alert('取引の削除に失敗しました。');
+      }
+    }
+  };
+
+  const closeModal = () => {
+    showCreateModal.value = false;
+    showEditModal.value = false;
+    editingTransaction.value = null;
+  };
+
+  const handleSave = async (data: CreateTransactionRequest) => {
+    try {
+      if (editingTransaction.value) {
+        await transactionStore.updateTransaction(editingTransaction.value.id, data);
+      } else {
+        await transactionStore.createTransaction(data);
+      }
+      closeModal();
+    } catch (err) {
+      console.error('取引の保存に失敗しました:', err);
+      alert('取引の保存に失敗しました。');
+    }
+  };
+
+  onMounted(() => {
+    transactionStore.fetchTransactions();
+  });
+</script>
+
 <template>
   <div class="transactions">
     <div class="page-header">
@@ -69,68 +131,6 @@
     />
   </div>
 </template>
-
-<script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import { useTransactionStore } from '@/stores/transaction';
-  import TransactionModal from '@/components/transaction/TransactionModal.vue';
-  import type { Transaction, CreateTransactionRequest } from '@/types';
-
-  const transactionStore = useTransactionStore();
-  const { transactions, loading, error } = transactionStore;
-
-  const showCreateModal = ref(false);
-  const showEditModal = ref(false);
-  const editingTransaction = ref<Transaction | null>(null);
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('ja-JP').format(num);
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('ja-JP');
-  };
-
-  const editTransaction = (transaction: Transaction) => {
-    editingTransaction.value = transaction;
-    showEditModal.value = true;
-  };
-
-  const deleteTransaction = async (id: number) => {
-    if (confirm('この取引を削除しますか？')) {
-      try {
-        await transactionStore.deleteTransaction(id);
-      } catch (err) {
-        console.error('取引の削除に失敗しました:', err);
-        alert('取引の削除に失敗しました。');
-      }
-    }
-  };
-
-  const closeModal = () => {
-    showCreateModal.value = false;
-    showEditModal.value = false;
-    editingTransaction.value = null;
-  };
-
-  const handleSave = async (data: CreateTransactionRequest) => {
-    try {
-      if (editingTransaction.value) {
-        await transactionStore.updateTransaction(editingTransaction.value.id, data);
-      } else {
-        await transactionStore.createTransaction(data);
-      }
-      closeModal();
-    } catch (err) {
-      console.error('取引の保存に失敗しました:', err);
-      alert('取引の保存に失敗しました。');
-    }
-  };
-
-  onMounted(() => {
-    transactionStore.fetchTransactions();
-  });
-</script>
 
 <style scoped>
   .transactions {

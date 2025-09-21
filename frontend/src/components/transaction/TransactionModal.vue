@@ -1,71 +1,3 @@
-<template>
-  <div v-if="show" class="modal-overlay" @click="handleOverlayClick">
-    <div class="modal" @click.stop>
-      <div class="modal-header">
-        <h3>{{ transaction ? '取引編集' : '新規取引' }}</h3>
-        <button class="modal-close" @click="$emit('close')">&times;</button>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="modal-body">
-        <div class="form-group">
-          <label class="form-label">種別</label>
-          <select v-model="form.type" class="form-input" required>
-            <option value="">選択してください</option>
-            <option value="income">収入</option>
-            <option value="expense">支出</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">カテゴリ</label>
-          <select v-model="form.category_id" class="form-input" required>
-            <option value="">選択してください</option>
-            <option v-for="category in filteredCategories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">金額</label>
-          <input
-            v-model.number="form.amount"
-            type="number"
-            class="form-input"
-            min="0.01"
-            step="0.01"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">日付</label>
-          <input v-model="form.transaction_date" type="date" class="form-input" required />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">メモ</label>
-          <textarea
-            v-model="form.memo"
-            class="form-input"
-            rows="3"
-            placeholder="メモ（任意）"
-          ></textarea>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="$emit('close')">
-            キャンセル
-          </button>
-          <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
-            {{ transaction ? '更新' : '作成' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
   import { useCategoryStore } from '@/stores/category';
@@ -153,6 +85,74 @@
     categoryStore.fetchCategories();
   });
 </script>
+
+<template>
+  <div v-if="show" class="modal-overlay" @click="handleOverlayClick">
+    <div class="modal" @click.stop>
+      <div class="modal-header">
+        <h3>{{ transaction ? '取引編集' : '新規取引' }}</h3>
+        <button class="modal-close" @click="$emit('close')">&times;</button>
+      </div>
+
+      <form @submit.prevent="handleSubmit" class="modal-body">
+        <div class="form-group">
+          <label class="form-label">種別</label>
+          <select v-model="form.type" class="form-input" required>
+            <option value="">選択してください</option>
+            <option value="income">収入</option>
+            <option value="expense">支出</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">カテゴリ</label>
+          <select v-model="form.category_id" class="form-input" required>
+            <option value="">選択してください</option>
+            <option v-for="category in filteredCategories" :key="category.id" :value="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">金額</label>
+          <input
+            v-model.number="form.amount"
+            type="number"
+            class="form-input"
+            min="0.01"
+            step="0.01"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">日付</label>
+          <input v-model="form.transaction_date" type="date" class="form-input" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">メモ</label>
+          <textarea
+            v-model="form.memo"
+            class="form-input"
+            rows="3"
+            placeholder="メモ（任意）"
+          ></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="$emit('close')">
+            キャンセル
+          </button>
+          <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
+            {{ transaction ? '更新' : '作成' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
 
 <style scoped>
   .modal-overlay {

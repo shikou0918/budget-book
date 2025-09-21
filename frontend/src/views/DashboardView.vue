@@ -1,3 +1,45 @@
+<script setup lang="ts">
+  import { ref, onMounted, computed } from 'vue';
+  import { useTransactionStore } from '@/stores/transaction';
+  import { summaryApi } from '@/services/api';
+  import type { MonthlySummary } from '@/types';
+
+  const transactionStore = useTransactionStore();
+  const { transactions, loading: transactionLoading, error: transactionError } = transactionStore;
+
+  const summary = ref<MonthlySummary | null>(null);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+
+  const recentTransactions = computed(() => transactions.slice(0, 5));
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('ja-JP').format(num);
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('ja-JP');
+  };
+
+  const fetchMonthlySummary = async () => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const now = new Date();
+      const response = await summaryApi.getMonthly(now.getFullYear(), now.getMonth() + 1);
+      summary.value = response.data;
+    } catch (err) {
+      error.value = '月次サマリーの取得に失敗しました';
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  onMounted(async () => {
+    await Promise.all([transactionStore.fetchTransactions(), fetchMonthlySummary()]);
+  });
+</script>
+
 <template>
   <div class="dashboard">
     <h2>ダッシュボード</h2>
@@ -68,48 +110,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
-  import { useTransactionStore } from '@/stores/transaction';
-  import { summaryApi } from '@/services/api';
-  import type { MonthlySummary } from '@/types';
-
-  const transactionStore = useTransactionStore();
-  const { transactions, loading: transactionLoading, error: transactionError } = transactionStore;
-
-  const summary = ref<MonthlySummary | null>(null);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
-
-  const recentTransactions = computed(() => transactions.slice(0, 5));
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('ja-JP').format(num);
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('ja-JP');
-  };
-
-  const fetchMonthlySummary = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const now = new Date();
-      const response = await summaryApi.getMonthly(now.getFullYear(), now.getMonth() + 1);
-      summary.value = response.data;
-    } catch (err) {
-      error.value = '月次サマリーの取得に失敗しました';
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  onMounted(async () => {
-    await Promise.all([transactionStore.fetchTransactions(), fetchMonthlySummary()]);
-  });
-</script>
 
 <style scoped>
   .dashboard {

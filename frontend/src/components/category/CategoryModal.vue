@@ -1,70 +1,3 @@
-<template>
-  <div v-if="show" class="modal-overlay" @click="handleOverlayClick">
-    <div class="modal" @click.stop>
-      <div class="modal-header">
-        <h3>{{ category ? 'カテゴリ編集' : '新規カテゴリ' }}</h3>
-        <button class="modal-close" @click="$emit('close')">&times;</button>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="modal-body">
-        <div class="form-group">
-          <label class="form-label">カテゴリ名</label>
-          <input
-            v-model="form.name"
-            type="text"
-            class="form-input"
-            maxlength="50"
-            required
-            placeholder="カテゴリ名を入力"
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">種別</label>
-          <select v-model="form.type" class="form-input" required>
-            <option value="">選択してください</option>
-            <option value="income">収入</option>
-            <option value="expense">支出</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">色</label>
-          <div class="color-input-group">
-            <input v-model="form.color" type="color" class="form-color" />
-            <input
-              v-model="form.color"
-              type="text"
-              class="form-input color-text"
-              pattern="#[0-9A-Fa-f]{6}"
-              placeholder="#007BFF"
-            />
-          </div>
-          <div class="color-presets">
-            <button
-              v-for="color in colorPresets"
-              :key="color"
-              type="button"
-              class="color-preset"
-              :style="{ backgroundColor: color }"
-              @click="form.color = color"
-            ></button>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="$emit('close')">
-            キャンセル
-          </button>
-          <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
-            {{ category ? '更新' : '作成' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
   import type { Category, CreateCategoryRequest } from '@/types';
@@ -135,6 +68,73 @@
     { immediate: true }
   );
 </script>
+
+<template>
+  <div v-if="show" class="modal-overlay" @click="handleOverlayClick">
+    <div class="modal" @click.stop>
+      <div class="modal-header">
+        <h3>{{ category ? 'カテゴリ編集' : '新規カテゴリ' }}</h3>
+        <button class="modal-close" @click="$emit('close')">&times;</button>
+      </div>
+
+      <form @submit.prevent="handleSubmit" class="modal-body">
+        <div class="form-group">
+          <label class="form-label">カテゴリ名</label>
+          <input
+            v-model="form.name"
+            type="text"
+            class="form-input"
+            maxlength="50"
+            required
+            placeholder="カテゴリ名を入力"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">種別</label>
+          <select v-model="form.type" class="form-input" required>
+            <option value="">選択してください</option>
+            <option value="income">収入</option>
+            <option value="expense">支出</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">色</label>
+          <div class="color-input-group">
+            <input v-model="form.color" type="color" class="form-color" />
+            <input
+              v-model="form.color"
+              type="text"
+              class="form-input color-text"
+              pattern="#[0-9A-Fa-f]{6}"
+              placeholder="#007BFF"
+            />
+          </div>
+          <div class="color-presets">
+            <button
+              v-for="color in colorPresets"
+              :key="color"
+              type="button"
+              class="color-preset"
+              :style="{ backgroundColor: color }"
+              @click="form.color = color"
+            ></button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="$emit('close')">
+            キャンセル
+          </button>
+          <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
+            {{ category ? '更新' : '作成' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
 
 <style scoped>
   .modal-overlay {

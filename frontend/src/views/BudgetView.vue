@@ -1,50 +1,3 @@
-<template>
-  <div class="budgets">
-    <div class="page-header">
-      <h2>予算管理</h2>
-      <button class="btn btn-primary" @click="showCreateModal = true">新規予算</button>
-    </div>
-
-    <div class="card">
-      <h3>予算一覧</h3>
-      <div v-if="loading" class="loading">読み込み中...</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else-if="budgets.length === 0">予算が設定されていません</div>
-      <div v-else>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>期間</th>
-              <th>カテゴリ</th>
-              <th>予算額</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="budget in budgets" :key="budget.id">
-              <td>{{ budget.target_year }}年{{ budget.target_month }}月</td>
-              <td>{{ budget.category?.name }}</td>
-              <td>¥{{ formatNumber(budget.amount) }}</td>
-              <td>
-                <button class="btn btn-secondary" @click="editBudget(budget)">編集</button>
-                <button class="btn btn-danger" @click="deleteBudget(budget.id)">削除</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <BudgetModal
-      v-if="showCreateModal || showEditModal"
-      :show="showCreateModal || showEditModal"
-      :budget="editingBudget"
-      @close="closeModal"
-      @save="handleSave"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { budgetApi } from '@/services/api';
@@ -119,6 +72,53 @@
     fetchBudgets();
   });
 </script>
+
+<template>
+  <div class="budgets">
+    <div class="page-header">
+      <h2>予算管理</h2>
+      <button class="btn btn-primary" @click="showCreateModal = true">新規予算</button>
+    </div>
+
+    <div class="card">
+      <h3>予算一覧</h3>
+      <div v-if="loading" class="loading">読み込み中...</div>
+      <div v-else-if="error" class="error">{{ error }}</div>
+      <div v-else-if="budgets.length === 0">予算が設定されていません</div>
+      <div v-else>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>期間</th>
+              <th>カテゴリ</th>
+              <th>予算額</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="budget in budgets" :key="budget.id">
+              <td>{{ budget.target_year }}年{{ budget.target_month }}月</td>
+              <td>{{ budget.category?.name }}</td>
+              <td>¥{{ formatNumber(budget.amount) }}</td>
+              <td>
+                <button class="btn btn-secondary" @click="editBudget(budget)">編集</button>
+                <button class="btn btn-danger" @click="deleteBudget(budget.id)">削除</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <BudgetModal
+      v-if="showCreateModal || showEditModal"
+      :show="showCreateModal || showEditModal"
+      :budget="editingBudget"
+      @close="closeModal"
+      @save="handleSave"
+    />
+  </div>
+</template>
 
 <style scoped>
   .budgets {

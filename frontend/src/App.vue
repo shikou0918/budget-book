@@ -1,3 +1,7 @@
+<script setup lang="ts">
+  import { RouterLink, RouterView } from 'vue-router';
+</script>
+
 <template>
   <div id="app">
     <header class="header">
@@ -19,10 +23,6 @@
     </main>
   </div>
 </template>
-
-<script setup lang="ts">
-  import { RouterLink, RouterView } from 'vue-router';
-</script>
 
 <style>
   #app {
