@@ -5,12 +5,12 @@ on:
     branches: [ main ]
     paths:
       - 'openapi.yml'
-      - '.github/workflows/deploy-swagger.yml'
+      - '.github/workflows/openapi-ci.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'openapi.yml'
-      - '.github/workflows/deploy-swagger.yml'
+      - '.github/workflows/openapi-ci.yml'
 
 jobs:
   build:
