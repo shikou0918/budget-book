@@ -7,7 +7,7 @@ import type {
   CreateTransactionRequest,
   CreateCategoryRequest,
   CreateBudgetRequest,
-} from '../types';
+} from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
