@@ -397,6 +397,13 @@
   resolved "https://registry.npmjs.org/@vue/tsconfig/-/tsconfig-0.7.0.tgz"
   integrity sha512-ku2uNz5MaZ9IerPPUyOHzyjhXoX2kVJaVf7hL315DC17vS6IiZRmmCPfggNbU16QTvM80+uYYy3eYJB59WCtvg==
 
+"@vuetify/loader-shared@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/@vuetify/loader-shared/-/loader-shared-2.1.1.tgz"
+  integrity sha512-jSZTzTYaoiv8iwonFCVZQ0YYX/M+Uyl4ng+C4egMJT0Hcmh9gIxJL89qfZICDeo3g0IhqrvipW2FFKKRDMtVcA==
+  dependencies:
+    upath "^2.0.1"
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.3.2.tgz"
@@ -566,7 +573,7 @@ de-indent@^1.0.2:
   resolved "https://registry.npmjs.org/de-indent/-/de-indent-1.0.2.tgz"
   integrity sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==
 
-debug@^4.3.1, debug@^4.3.2, debug@^4.3.4:
+debug@^4.3.1, debug@^4.3.2, debug@^4.3.3, debug@^4.3.4:
   version "4.4.3"
   resolved "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz"
   integrity sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==
@@ -1496,6 +1503,11 @@ undici-types@~6.21.0:
   resolved "https://registry.npmjs.org/undici-types/-/undici-types-6.21.0.tgz"
   integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
 
+upath@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/upath/-/upath-2.0.1.tgz"
+  integrity sha512-1uEe95xksV1O0CYKXo8vQvN1JEbtJp7lb7C5U9HMsIp6IVwntkH/oNUzyVNQSd4S1sYk2FpSSW44FqMc8qee5w==
+
 uri-js@^4.2.2:
   version "4.4.1"
   resolved "https://registry.npmjs.org/uri-js/-/uri-js-4.4.1.tgz"
@@ -1508,7 +1520,16 @@ util-deprecate@^1.0.2:
   resolved "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-"vite@^5.0.0 || ^6.0.0", vite@^6.2.0:
+vite-plugin-vuetify@^2.1.2, vite-plugin-vuetify@>=2.1.0:
+  version "2.1.2"
+  resolved "https://registry.npmjs.org/vite-plugin-vuetify/-/vite-plugin-vuetify-2.1.2.tgz"
+  integrity sha512-I/wd6QS+DO6lHmuGoi1UTyvvBTQ2KDzQZ9oowJQEJ6OcjWfJnscYXx2ptm6S7fJSASuZT8jGRBL3LV4oS3LpaA==
+  dependencies:
+    "@vuetify/loader-shared" "^2.1.1"
+    debug "^4.3.3"
+    upath "^2.0.1"
+
+"vite@^5.0.0 || ^6.0.0", vite@^6.2.0, vite@>=5:
   version "6.3.6"
   resolved "https://registry.npmjs.org/vite/-/vite-6.3.6.tgz"
   integrity sha512-0msEVHJEScQbhkbVTb/4iHZdJ6SXp/AvxL2sjwYQFfBqleHtnCqv1J3sa9zbWz/6kW1m9Tfzn92vW+kZ1WV6QA==
@@ -1565,7 +1586,7 @@ vue-tsc@^3.0.7:
     "@volar/typescript" "2.4.23"
     "@vue/language-core" "3.0.7"
 
-"vue@^2.7.0 || ^3.5.11", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.0-0 || ^2.7.0", vue@^3.2.0, vue@^3.2.25, vue@^3.4.0, vue@^3.5.0, vue@^3.5.13, vue@3.5.21:
+"vue@^2.7.0 || ^3.5.11", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.0-0 || ^2.7.0", vue@^3.2.0, vue@^3.2.25, vue@^3.4.0, vue@^3.5.0, vue@^3.5.13, vue@3.5.21:
   version "3.5.21"
   resolved "https://registry.npmjs.org/vue/-/vue-3.5.21.tgz"
   integrity sha512-xxf9rum9KtOdwdRkiApWL+9hZEMWE90FHh8yS1+KJAiWYh+iGWV1FquPjoO9VUHQ+VIhsCXNNyZ5Sf4++RVZBA==
@@ -1576,7 +1597,7 @@ vue-tsc@^3.0.7:
     "@vue/server-renderer" "3.5.21"
     "@vue/shared" "3.5.21"
 
-vuetify@^3.10.2:
+vuetify@^3.0.0, vuetify@^3.10.2:
   version "3.10.2"
   resolved "https://registry.npmjs.org/vuetify/-/vuetify-3.10.2.tgz"
   integrity sha512-uuAm+uj170ZWdS0aiomhgtdYOR3/I2yzynskBfYyFB1Fn/HKvlvPDaU3ISZnf0GHIJQENdj7eLg/wTChrIwEQw==
