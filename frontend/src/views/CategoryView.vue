@@ -44,7 +44,6 @@ const handleSave = async (data: CreateCategoryRequest) => {
     }
     closeModal();
   } catch (err) {
-    console.error('カテゴリの保存に失敗しました:', err);
     alert('カテゴリの保存に失敗しました。');
   }
 };

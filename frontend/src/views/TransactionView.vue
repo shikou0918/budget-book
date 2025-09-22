@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useTransactionStore } from '@/stores/transaction';
 import TransactionModal from '@/components/transaction/TransactionModal.vue';
 import type { Transaction, CreateTransactionRequest } from '@/types';
@@ -10,6 +10,7 @@ const { transactions, loading, error } = transactionStore;
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const editingTransaction = ref<Transaction | null>(null);
+const search = ref('');
 
 const formatNumber = (num: number) => {
   return new Intl.NumberFormat('ja-JP').format(num);
@@ -18,6 +19,16 @@ const formatNumber = (num: number) => {
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('ja-JP');
 };
+
+// データテーブルのヘッダー定義
+const headers = computed(() => [
+  { title: '日付', value: 'transaction_date', sortable: true },
+  { title: '種別', value: 'type', sortable: true },
+  { title: 'カテゴリ', value: 'category.name', sortable: true },
+  { title: '金額', value: 'amount', sortable: true },
+  { title: 'メモ', value: 'memo', sortable: false },
+  { title: '操作', value: 'actions', sortable: false, width: '120px' },
+]);
 
 const editTransaction = (transaction: Transaction) => {
   editingTransaction.value = transaction;
@@ -29,7 +40,6 @@ const deleteTransaction = async (id: number) => {
     try {
       await transactionStore.deleteTransaction(id);
     } catch (err) {
-      console.error('取引の削除に失敗しました:', err);
       alert('取引の削除に失敗しました。');
     }
   }
@@ -50,7 +60,6 @@ const handleSave = async (data: CreateTransactionRequest) => {
     }
     closeModal();
   } catch (err) {
-    console.error('取引の保存に失敗しました:', err);
     alert('取引の保存に失敗しました。');
   }
 };
@@ -72,53 +81,94 @@ onMounted(() => {
       <div v-else-if="error" class="error">{{ error }}</div>
       <div v-else-if="transactions.length === 0">取引がありません</div>
       <div v-else>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>日付</th>
-              <th>種別</th>
-              <th>カテゴリ</th>
-              <th>金額</th>
-              <th>メモ</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="transaction in transactions" :key="transaction.id">
-              <td>{{ formatDate(transaction.transaction_date) }}</td>
-              <td>
-                <span
-                  :class="{
-                    'badge-income': transaction.type === 'income',
-                    'badge-expense': transaction.type === 'expense',
-                  }"
-                >
-                  {{ transaction.type === 'income' ? '収入' : '支出' }}
-                </span>
-              </td>
-              <td>{{ transaction.category?.name }}</td>
-              <td
-                :class="{
-                  income: transaction.type === 'income',
-                  expense: transaction.type === 'expense',
-                }"
-              >
-                {{ transaction.type === 'income' ? '+' : '-' }}¥{{
-                  formatNumber(transaction.amount)
-                }}
-              </td>
-              <td>{{ transaction.memo || '-' }}</td>
-              <td>
-                <button class="btn btn-secondary" @click="editTransaction(transaction)">
-                  編集
-                </button>
-                <button class="btn btn-danger" @click="deleteTransaction(transaction.id)">
-                  削除
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <v-data-table
+          :headers="headers"
+          :items="transactions"
+          :search="search"
+          :loading="loading"
+          class="elevation-1"
+          :items-per-page="10"
+          :items-per-page-options="[5, 10, 25, 50]"
+        >
+          <!-- 検索フィールド -->
+          <template #top>
+            <v-toolbar flat>
+              <v-spacer></v-spacer>
+              <v-text-field
+                v-model="search"
+                prepend-inner-icon="mdi-magnify"
+                label="検索"
+                single-line
+                hide-details
+                variant="outlined"
+                density="compact"
+                style="max-width: 300px"
+              ></v-text-field>
+            </v-toolbar>
+          </template>
+
+          <!-- 日付フォーマット -->
+          <template v-slot:[`item.transaction_date`]="{ item }">
+            {{ formatDate(item.transaction_date) }}
+          </template>
+
+          <!-- 種別カスタム表示 -->
+          <template v-slot:[`item.type`]="{ item }">
+            <v-chip
+              :color="item.type === 'income' ? 'success' : 'error'"
+              variant="outlined"
+              size="small"
+            >
+              {{ item.type === 'income' ? '収入' : '支出' }}
+            </v-chip>
+          </template>
+
+          <!-- 金額フォーマット -->
+          <template v-slot:[`item.amount`]="{ item }">
+            <span
+              :class="{
+                'text-success': item.type === 'income',
+                'text-error': item.type === 'expense',
+              }"
+            >
+              {{ item.type === 'income' ? '+' : '-' }}¥{{ formatNumber(item.amount) }}
+            </span>
+          </template>
+
+          <!-- メモ表示 -->
+          <template v-slot:[`item.memo`]="{ item }">
+            {{ item.memo || '-' }}
+          </template>
+
+          <!-- 操作ボタン -->
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              size="small"
+              class="me-2"
+              @click="editTransaction(item)"
+            >
+              編集
+            </v-btn>
+            <v-btn
+              color="error"
+              variant="outlined"
+              size="small"
+              @click="deleteTransaction(item.id)"
+            >
+              削除
+            </v-btn>
+          </template>
+
+          <!-- データなしの表示 -->
+          <template #no-data>
+            <div class="text-center pa-4">
+              <v-icon size="48" color="grey-lighten-1">mdi-database-off</v-icon>
+              <p class="text-h6 mt-2">取引がありません</p>
+            </div>
+          </template>
+        </v-data-table>
       </div>
     </div>
 
@@ -150,52 +200,11 @@ onMounted(() => {
   color: #333;
 }
 
-.badge-income,
-.badge-expense {
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.badge-income {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.badge-expense {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.income {
-  color: #28a745;
-}
-
-.expense {
-  color: #dc3545;
-}
-
-.table td .btn {
-  margin-right: 0.5rem;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-}
-
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
-  }
-
-  .table {
-    font-size: 0.875rem;
-  }
-
-  .table td .btn {
-    font-size: 0.625rem;
-    padding: 0.125rem 0.25rem;
   }
 }
 </style>
