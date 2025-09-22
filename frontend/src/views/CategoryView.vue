@@ -159,6 +159,7 @@ onMounted(() => {
 
 .category-name {
   flex: 1;
+  color: #000;
   font-weight: 500;
 }
 
