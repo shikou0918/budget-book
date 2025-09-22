@@ -1,43 +1,43 @@
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
-  import { useTransactionStore } from '@/stores/transaction';
-  import { summaryApi } from '@/services/api';
-  import type { MonthlySummary } from '@/types';
+import { ref, onMounted, computed } from 'vue';
+import { useTransactionStore } from '@/stores/transaction';
+import { summaryApi } from '@/services/api';
+import type { MonthlySummary } from '@/types';
 
-  const transactionStore = useTransactionStore();
-  const { transactions, loading: transactionLoading, error: transactionError } = transactionStore;
+const transactionStore = useTransactionStore();
+const { transactions, loading: transactionLoading, error: transactionError } = transactionStore;
 
-  const summary = ref<MonthlySummary | null>(null);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
+const summary = ref<MonthlySummary | null>(null);
+const loading = ref(false);
+const error = ref<string | null>(null);
 
-  const recentTransactions = computed(() => transactions.slice(0, 5));
+const recentTransactions = computed(() => transactions.slice(0, 5));
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('ja-JP').format(num);
-  };
+const formatNumber = (num: number) => {
+  return new Intl.NumberFormat('ja-JP').format(num);
+};
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('ja-JP');
-  };
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toLocaleDateString('ja-JP');
+};
 
-  const fetchMonthlySummary = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const now = new Date();
-      const response = await summaryApi.getMonthly(now.getFullYear(), now.getMonth() + 1);
-      summary.value = response.data;
-    } catch (err) {
-      error.value = '月次サマリーの取得に失敗しました';
-    } finally {
-      loading.value = false;
-    }
-  };
+const fetchMonthlySummary = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const now = new Date();
+    const response = await summaryApi.getMonthly(now.getFullYear(), now.getMonth() + 1);
+    summary.value = response.data;
+  } catch (err) {
+    error.value = '月次サマリーの取得に失敗しました';
+  } finally {
+    loading.value = false;
+  }
+};
 
-  onMounted(async () => {
-    await Promise.all([transactionStore.fetchTransactions(), fetchMonthlySummary()]);
-  });
+onMounted(async () => {
+  await Promise.all([transactionStore.fetchTransactions(), fetchMonthlySummary()]);
+});
 </script>
 
 <template>
@@ -112,74 +112,74 @@
 </template>
 
 <style scoped>
-  .dashboard {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-  .dashboard h2 {
-    margin-bottom: 2rem;
-    color: #333;
-  }
+.dashboard h2 {
+  margin-bottom: 2rem;
+  color: #333;
+}
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  grid-column: 1 / -1;
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.stat-value.income {
+  color: #28a745;
+}
+
+.stat-value.expense {
+  color: #dc3545;
+}
+
+.income {
+  color: #28a745;
+}
+
+.expense {
+  color: #dc3545;
+}
+
+@media (max-width: 768px) {
   .dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .summary-card {
-    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
   }
 
   .summary-stats {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 1rem;
+    flex-direction: column;
+    gap: 1rem;
   }
-
-  .stat {
-    text-align: center;
-  }
-
-  .stat-label {
-    display: block;
-    font-size: 0.875rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-  }
-
-  .stat-value {
-    display: block;
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
-
-  .stat-value.income {
-    color: #28a745;
-  }
-
-  .stat-value.expense {
-    color: #dc3545;
-  }
-
-  .income {
-    color: #28a745;
-  }
-
-  .expense {
-    color: #dc3545;
-  }
-
-  @media (max-width: 768px) {
-    .dashboard-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .summary-stats {
-      flex-direction: column;
-      gap: 1rem;
-    }
-  }
+}
 </style>

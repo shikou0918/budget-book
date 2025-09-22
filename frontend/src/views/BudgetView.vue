@@ -1,76 +1,76 @@
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import { budgetApi } from '@/services/api';
-  import BudgetModal from '@/components/budget/BudgetModal.vue';
-  import type { Budget, CreateBudgetRequest } from '@/types';
+import { ref, onMounted } from 'vue';
+import { budgetApi } from '@/services/api';
+import BudgetModal from '@/components/budget/BudgetModal.vue';
+import type { Budget, CreateBudgetRequest } from '@/types';
 
-  const budgets = ref<Budget[]>([]);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
-  const showCreateModal = ref(false);
-  const showEditModal = ref(false);
-  const editingBudget = ref<Budget | null>(null);
+const budgets = ref<Budget[]>([]);
+const loading = ref(false);
+const error = ref<string | null>(null);
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const editingBudget = ref<Budget | null>(null);
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('ja-JP').format(num);
-  };
+const formatNumber = (num: number) => {
+  return new Intl.NumberFormat('ja-JP').format(num);
+};
 
-  const fetchBudgets = async () => {
-    loading.value = true;
-    error.value = null;
+const fetchBudgets = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const response = await budgetApi.getAll();
+    budgets.value = response.data;
+  } catch (err) {
+    error.value = '予算の取得に失敗しました';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const editBudget = (budget: Budget) => {
+  editingBudget.value = budget;
+  showEditModal.value = true;
+};
+
+const deleteBudget = async (id: number) => {
+  if (confirm('この予算を削除しますか？')) {
     try {
-      const response = await budgetApi.getAll();
-      budgets.value = response.data;
+      await budgetApi.delete(id);
+      budgets.value = budgets.value.filter(b => b.id !== id);
     } catch (err) {
-      error.value = '予算の取得に失敗しました';
-    } finally {
-      loading.value = false;
+      alert('予算の削除に失敗しました');
     }
-  };
+  }
+};
 
-  const editBudget = (budget: Budget) => {
-    editingBudget.value = budget;
-    showEditModal.value = true;
-  };
+const closeModal = () => {
+  showCreateModal.value = false;
+  showEditModal.value = false;
+  editingBudget.value = null;
+};
 
-  const deleteBudget = async (id: number) => {
-    if (confirm('この予算を削除しますか？')) {
-      try {
-        await budgetApi.delete(id);
-        budgets.value = budgets.value.filter(b => b.id !== id);
-      } catch (err) {
-        alert('予算の削除に失敗しました');
+const handleSave = async (data: CreateBudgetRequest) => {
+  try {
+    if (editingBudget.value) {
+      const response = await budgetApi.update(editingBudget.value.id, data);
+      const index = budgets.value.findIndex(b => b.id === editingBudget.value!.id);
+      if (index !== -1) {
+        budgets.value[index] = response.data;
       }
+    } else {
+      const response = await budgetApi.create(data);
+      budgets.value.unshift(response.data);
     }
-  };
+    closeModal();
+  } catch (err) {
+    alert('予算の保存に失敗しました');
+  }
+};
 
-  const closeModal = () => {
-    showCreateModal.value = false;
-    showEditModal.value = false;
-    editingBudget.value = null;
-  };
-
-  const handleSave = async (data: CreateBudgetRequest) => {
-    try {
-      if (editingBudget.value) {
-        const response = await budgetApi.update(editingBudget.value.id, data);
-        const index = budgets.value.findIndex(b => b.id === editingBudget.value!.id);
-        if (index !== -1) {
-          budgets.value[index] = response.data;
-        }
-      } else {
-        const response = await budgetApi.create(data);
-        budgets.value.unshift(response.data);
-      }
-      closeModal();
-    } catch (err) {
-      alert('予算の保存に失敗しました');
-    }
-  };
-
-  onMounted(() => {
-    fetchBudgets();
-  });
+onMounted(() => {
+  fetchBudgets();
+});
 </script>
 
 <template>
@@ -121,34 +121,34 @@
 </template>
 
 <style scoped>
-  .budgets {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+.budgets {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.table td .btn {
+  margin-right: 0.5rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 768px) {
   .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
   }
-
-  .page-header h2 {
-    margin: 0;
-    color: #333;
-  }
-
-  .table td .btn {
-    margin-right: 0.5rem;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      gap: 1rem;
-      align-items: stretch;
-    }
-  }
+}
 </style>

@@ -1,57 +1,57 @@
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
-  import { useCategoryStore } from '@/stores/category';
-  import CategoryModal from '@/components/category/CategoryModal.vue';
-  import type { Category, CreateCategoryRequest } from '@/types';
+import { ref, computed, onMounted } from 'vue';
+import { useCategoryStore } from '@/stores/category';
+import CategoryModal from '@/components/category/CategoryModal.vue';
+import type { Category, CreateCategoryRequest } from '@/types';
 
-  const categoryStore = useCategoryStore();
-  const { loading, error } = categoryStore;
+const categoryStore = useCategoryStore();
+const { loading, error } = categoryStore;
 
-  const showCreateModal = ref(false);
-  const showEditModal = ref(false);
-  const editingCategory = ref<Category | null>(null);
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const editingCategory = ref<Category | null>(null);
 
-  const incomeCategories = computed(() => categoryStore.getIncomeCategories());
-  const expenseCategories = computed(() => categoryStore.getExpenseCategories());
+const incomeCategories = computed(() => categoryStore.getIncomeCategories());
+const expenseCategories = computed(() => categoryStore.getExpenseCategories());
 
-  const editCategory = (category: Category) => {
-    editingCategory.value = category;
-    showEditModal.value = true;
-  };
+const editCategory = (category: Category) => {
+  editingCategory.value = category;
+  showEditModal.value = true;
+};
 
-  const deleteCategory = async (id: number) => {
-    if (confirm('このカテゴリを削除しますか？関連する取引がある場合は削除できません。')) {
-      try {
-        await categoryStore.deleteCategory(id);
-      } catch (err) {
-        alert('カテゴリの削除に失敗しました。関連する取引が存在する可能性があります。');
-      }
-    }
-  };
-
-  const closeModal = () => {
-    showCreateModal.value = false;
-    showEditModal.value = false;
-    editingCategory.value = null;
-  };
-
-  const handleSave = async (data: CreateCategoryRequest) => {
+const deleteCategory = async (id: number) => {
+  if (confirm('このカテゴリを削除しますか？関連する取引がある場合は削除できません。')) {
     try {
-      if (editingCategory.value) {
-        await categoryStore.updateCategory(editingCategory.value.id, data);
-      } else {
-        await categoryStore.createCategory(data);
-      }
-      closeModal();
+      await categoryStore.deleteCategory(id);
     } catch (err) {
-      console.error('カテゴリの保存に失敗しました:', err);
-      alert('カテゴリの保存に失敗しました。');
+      alert('カテゴリの削除に失敗しました。関連する取引が存在する可能性があります。');
     }
-  };
+  }
+};
 
-  onMounted(() => {
-    categoryStore.fetchCategories();
-  });
+const closeModal = () => {
+  showCreateModal.value = false;
+  showEditModal.value = false;
+  editingCategory.value = null;
+};
+
+const handleSave = async (data: CreateCategoryRequest) => {
+  try {
+    if (editingCategory.value) {
+      await categoryStore.updateCategory(editingCategory.value.id, data);
+    } else {
+      await categoryStore.createCategory(data);
+    }
+    closeModal();
+  } catch (err) {
+    console.error('カテゴリの保存に失敗しました:', err);
+    alert('カテゴリの保存に失敗しました。');
+  }
+};
+
+onMounted(() => {
+  categoryStore.fetchCategories();
+});
 </script>
 
 <template>
@@ -108,80 +108,80 @@
 </template>
 
 <style scoped>
-  .categories {
-    max-width: 1200px;
-    margin: 0 auto;
+.categories {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.category-item:hover {
+  background-color: #f8f9fa;
+}
+
+.category-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  border: 1px solid #ddd;
+}
+
+.category-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.category-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.category-actions .btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .category-grid {
+    grid-template-columns: 1fr;
   }
 
   .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-
-  .page-header h2 {
-    margin: 0;
-    color: #333;
-  }
-
-  .category-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  .category-list {
-    display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
+    align-items: stretch;
   }
-
-  .category-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-  }
-
-  .category-item:hover {
-    background-color: #f8f9fa;
-  }
-
-  .category-color {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    margin-right: 0.75rem;
-    border: 1px solid #ddd;
-  }
-
-  .category-name {
-    flex: 1;
-    font-weight: 500;
-  }
-
-  .category-actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .category-actions .btn {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  @media (max-width: 768px) {
-    .category-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .page-header {
-      flex-direction: column;
-      gap: 1rem;
-      align-items: stretch;
-    }
-  }
+}
 </style>
