@@ -43,7 +43,7 @@ frontend-lint:
 
 frontend-lint-fix:
 	@echo "Running frontend linter with fixes..."
-	cd frontend && yarn lint
+	cd frontend && yarn lint:fix
 
 frontend-format:
 	@echo "Formatting frontend code..."
