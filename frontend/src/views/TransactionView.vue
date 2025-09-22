@@ -156,6 +156,7 @@ onMounted(() => {
               color="error"
               variant="outlined"
               size="small"
+              class="me-2"
               @click="deleteTransaction(item.id)"
             >
               削除
