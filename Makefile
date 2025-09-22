@@ -1,77 +1,72 @@
 .PHONY: help install lint lint-fix format format-check test clean
 
-# Default target
+# デフォルトターゲット
 help:
-	@echo "Available commands:"
-	@echo "  install     - Install dependencies for both frontend and backend"
-	@echo "  lint        - Run linters for both frontend and backend"
-	@echo "  lint-fix    - Run linters with auto-fix for both frontend and backend"
-	@echo "  format      - Format code for both frontend and backend"
-	@echo "  format-check- Check code formatting for both frontend and backend"
-	@echo "  test        - Run tests for both frontend and backend"
-	@echo "  clean       - Clean build artifacts"
+	@echo "利用可能なコマンド:"
+	@echo "  install     - フロントエンドとバックエンドの依存関係をインストール"
+	@echo "  lint        - フロントエンドとバックエンドのLinterを実行"
+	@echo "  lint-fix    - フロントエンドとバックエンドのLinterを自動修正付きで実行"
+	@echo "  format      - フロントエンドとバックエンドのコードをFormat"
+	@echo "  format-check- フロントエンドとバックエンドのコードFormatをチェック"
+	@echo "  test        - フロントエンドとバックエンドのテストを実行"
+	@echo "  clean       - ビルド成果物をクリーンアップ"
 
-# Install dependencies
+# 依存関係のインストール
 install:
-	@echo "Installing backend dependencies..."
+	@echo "バックエンドの依存関係をインストール中..."
 	cd backend && go mod download
-	@echo "Installing frontend dependencies..."
+	@echo "フロントエンドの依存関係をインストール中..."
 	cd frontend && yarn install
 
-# Backend targets
+# バックエンドターゲット
 backend-lint:
-	@echo "Running backend linter..."
+	@echo "バックエンドのリンターを実行中..."
 	cd backend && golangci-lint run
 
 backend-lint-fix:
-	@echo "Running backend linter with fixes..."
+	@echo "バックエンドのリンターを修正付きで実行中..."
 	cd backend && golangci-lint run --fix
 
 backend-format:
-	@echo "Formatting backend code..."
+	@echo "バックエンドコードをフォーマット中..."
 	cd backend && gofmt -s -w .
 	cd backend && goimports -w .
 
 backend-test:
-	@echo "Running backend tests..."
+	@echo "バックエンドテストを実行中..."
 	cd backend && go test -v ./...
 
-# Frontend targets
+# フロントエンドターゲット
 frontend-lint:
-	@echo "Running frontend linter..."
+	@echo "フロントエンドのリンターを実行中..."
 	cd frontend && yarn lint:check
 
 frontend-lint-fix:
-	@echo "Running frontend linter with fixes..."
+	@echo "フロントエンドのリンターを修正付きで実行中..."
 	cd frontend && yarn lint:fix
 
 frontend-format:
-	@echo "Formatting frontend code..."
+	@echo "フロントエンドコードをフォーマット中..."
 	cd frontend && yarn format
 
 frontend-format-check:
-	@echo "Checking frontend code formatting..."
+	@echo "フロントエンドのコードフォーマットをチェック中..."
 	cd frontend && yarn format:check
 
 frontend-test:
-	@echo "Running frontend tests..."
-	cd frontend && yarn test 2>/dev/null || echo "No frontend tests configured yet"
+	@echo "フロントエンドテストを実行中..."
+	cd frontend && yarn test 2>/dev/null || echo "フロントエンドテストはまだ設定されていません"
 
-# Combined targets
+# まとめて実行
 lint: backend-lint frontend-lint
-
 lint-fix: backend-lint-fix frontend-lint-fix
-
 format: backend-format frontend-format
-
 format-check: frontend-format-check
-	@echo "Backend formatting is handled by gofmt (no separate check needed)"
-
 test: backend-test frontend-test
 
-# Clean
+# クリーンアップ
 clean:
-	@echo "Cleaning backend artifacts..."
+	@echo "バックエンドの成果物をクリーンアップ中..."
 	cd backend && rm -rf bin/
-	@echo "Cleaning frontend artifacts..."
+	@echo "フロントエンドの成果物をクリーンアップ中..."
 	cd frontend && rm -rf dist/ node_modules/.cache/
