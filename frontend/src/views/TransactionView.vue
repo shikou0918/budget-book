@@ -108,12 +108,12 @@ onMounted(() => {
           </template>
 
           <!-- 日付フォーマット -->
-          <template v-slot:[`item.transaction_date`]="{ item }">
+          <template #[`item.transaction_date`]="{ item }">
             {{ formatDate(item.transaction_date) }}
           </template>
 
           <!-- 種別カスタム表示 -->
-          <template v-slot:[`item.type`]="{ item }">
+          <template #[`item.type`]="{ item }">
             <v-chip
               :color="item.type === 'income' ? 'success' : 'error'"
               variant="outlined"
@@ -124,7 +124,7 @@ onMounted(() => {
           </template>
 
           <!-- 金額フォーマット -->
-          <template v-slot:[`item.amount`]="{ item }">
+          <template #[`item.amount`]="{ item }">
             <span
               :class="{
                 'text-success': item.type === 'income',
@@ -136,12 +136,12 @@ onMounted(() => {
           </template>
 
           <!-- メモ表示 -->
-          <template v-slot:[`item.memo`]="{ item }">
+          <template #[`item.memo`]="{ item }">
             {{ item.memo || '-' }}
           </template>
 
           <!-- 操作ボタン -->
-          <template v-slot:[`item.actions`]="{ item }">
+          <template #[`item.actions`]="{ item }">
             <v-btn
               color="primary"
               variant="outlined"
