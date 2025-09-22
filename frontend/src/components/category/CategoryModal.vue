@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { COLOR_PRESETS, DEFAULT_COLOR } from '@/config/colors';
 import type { Category, CreateCategoryRequest } from '@/types';
 
 interface Props {
@@ -16,21 +17,8 @@ const emit = defineEmits<{
 const form = ref<CreateCategoryRequest>({
   name: '',
   type: 'expense',
-  color: '#007BFF',
+  color: DEFAULT_COLOR,
 });
-
-const colorPresets = [
-  '#007BFF',
-  '#28a745',
-  '#dc3545',
-  '#ffc107',
-  '#17a2b8',
-  '#6610f2',
-  '#e83e8c',
-  '#fd7e14',
-  '#20c997',
-  '#6c757d',
-];
 
 const isFormValid = computed(() => {
   return form.value.name.trim() && form.value.type && form.value.color;
@@ -55,13 +43,13 @@ watch(
       form.value = {
         name: newCategory.name,
         type: newCategory.type,
-        color: newCategory.color || '#007BFF',
+        color: newCategory.color || DEFAULT_COLOR,
       };
     } else {
       form.value = {
         name: '',
         type: 'expense',
-        color: '#007BFF',
+        color: DEFAULT_COLOR,
       };
     }
   },
@@ -113,7 +101,7 @@ watch(
           </div>
           <div class="color-presets">
             <button
-              v-for="color in colorPresets"
+              v-for="color in COLOR_PRESETS"
               :key="color"
               type="button"
               class="color-preset"
