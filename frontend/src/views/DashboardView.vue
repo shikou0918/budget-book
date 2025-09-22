@@ -3,24 +3,24 @@ import { ref, onMounted, computed } from 'vue';
 import { useTransactionStore } from '@/stores/transaction';
 import { summaryApi } from '@/services/api';
 import type { MonthlySummary } from '@/types';
+import { storeToRefs } from 'pinia';
+import TransactionTable from '@/components/transaction/TransactionTable.vue';
 
 const transactionStore = useTransactionStore();
-const { transactions, loading: transactionLoading, error: transactionError } = transactionStore;
+const {
+  transactions,
+  loading: transactionLoading,
+  error: transactionError,
+} = storeToRefs(transactionStore);
 
 const summary = ref<MonthlySummary | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
-
-const recentTransactions = computed(() => transactions.slice(0, 5));
+const recentTransactions = computed(() => transactions.value.slice(0, 5));
 
 const formatNumber = (num: number) => {
   return new Intl.NumberFormat('ja-JP').format(num);
 };
-
-const formatDate = (dateStr: string) => {
-  return new Date(dateStr).toLocaleDateString('ja-JP');
-};
-
 const fetchMonthlySummary = async () => {
   loading.value = true;
   error.value = null;
@@ -78,33 +78,7 @@ onMounted(async () => {
         <div v-else-if="transactionError" class="error">{{ transactionError }}</div>
         <div v-else-if="recentTransactions.length === 0">取引がありません</div>
         <div v-else>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>日付</th>
-                <th>カテゴリ</th>
-                <th>金額</th>
-                <th>メモ</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="transaction in recentTransactions" :key="transaction.id">
-                <td>{{ formatDate(transaction.transaction_date) }}</td>
-                <td>{{ transaction.category?.name }}</td>
-                <td
-                  :class="{
-                    income: transaction.type === 'income',
-                    expense: transaction.type === 'expense',
-                  }"
-                >
-                  {{ transaction.type === 'income' ? '+' : '-' }}¥{{
-                    formatNumber(transaction.amount)
-                  }}
-                </td>
-                <td>{{ transaction.memo || '-' }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <TransactionTable :transactions="transactions" :loading="loading" :items-per-page="10" />
         </div>
       </div>
     </div>
