@@ -3,9 +3,10 @@ import { ref, computed, onMounted } from 'vue';
 import { useTransactionStore } from '@/stores/transaction';
 import TransactionModal from '@/components/transaction/TransactionModal.vue';
 import type { Transaction, CreateTransactionRequest } from '@/types';
+import { storeToRefs } from 'pinia';
 
 const transactionStore = useTransactionStore();
-const { transactions, loading, error } = transactionStore;
+const { transactions, loading, error } = storeToRefs(transactionStore);
 
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
