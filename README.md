@@ -17,8 +17,12 @@
 - **Vite** - ビルドツール
 - **Pinia** - 状態管理
 - **Vue Router** - ルーティング
+- **Vuetify** - UI コンポーネントライブラリ
 - **Chart.js** - グラフ表示
 - **Axios** - HTTP クライアント
+- **Vitest** - テストフレームワーク
+- **Vue Test Utils** - Vue コンポーネントテスト
+- **jsdom** - ブラウザ環境シミュレーション
 
 ### インフラ
 - **Docker & Docker Compose** - コンテナ化
@@ -39,10 +43,17 @@
 ├── frontend/               # Vue.js フロントエンド
 │   ├── src/
 │   │   ├── components/     # Vue コンポーネント
+│   │   │   └── **/__tests__/  # コンポーネントテスト
 │   │   ├── views/          # ページコンポーネント
 │   │   ├── stores/         # Pinia ストア
-│   │   └── router/         # ルーティング設定
-│   └── public/             # 静的ファイル
+│   │   │   └── __tests__/     # ストアテスト
+│   │   ├── utils/          # ユーティリティ関数
+│   │   │   └── __tests__/     # ユーティリティテスト
+│   │   ├── router/         # ルーティング設定
+│   │   └── types/          # TypeScript 型定義
+│   ├── public/             # 静的ファイル
+│   ├── vitest.config.ts    # Vitest 設定
+│   └── src/test-setup.ts   # テストセットアップ
 └── docker-compose.yml      # Docker 設定
 ```
 
@@ -51,7 +62,7 @@
 ### 前提条件
 - Docker & Docker Compose
 - Go 1.21+ (ローカル開発時)
-- Node.js 18+ & Yarn (ローカル開発時)
+- Node.js 20+ & Yarn (ローカル開発時)
 
 ### Docker での起動
 
@@ -88,6 +99,8 @@ yarn dev
 
 ## 開発コマンド
 
+### Make コマンド
+
 ```bash
 # ヘルプ表示
 make help
@@ -113,6 +126,33 @@ make test
 # ビルド成果物削除
 make clean
 ```
+
+### フロントエンドテスト
+
+```bash
+cd frontend
+
+# テスト実行（ウォッチモード）
+yarn test
+
+# テスト実行（一回のみ）
+yarn test:run
+
+# テスト UI でブラウザ表示
+yarn test:ui
+
+# カバレッジ付きでテスト実行
+yarn test:coverage
+```
+
+### テスト構成
+
+- **ユニットテスト**: Vitest + Vue Test Utils
+  - `src/components/**/__tests__/` - Vue コンポーネントテスト
+  - `src/stores/__tests__/` - Pinia ストアテスト
+  - `src/utils/__tests__/` - ユーティリティ関数テスト
+- **モック**: vi.mock() でAPI呼び出しをモック
+- **テスト環境**: jsdom でブラウザ環境をシミュレーション
 
 ## API エンドポイント
 
@@ -152,6 +192,7 @@ atlas migrate apply --url "mysql://root:password@localhost:3306/budget_book"
 
 ## 機能
 
+### アプリケーション機能
 - ✅ 収入・支出の記録管理
 - ✅ カテゴリ管理
 - ✅ 予算設定・管理
@@ -159,3 +200,12 @@ atlas migrate apply --url "mysql://root:password@localhost:3306/budget_book"
 - ✅ レスポンシブデザイン
 - ✅ データのバリデーション
 - ✅ REST API
+
+### 開発・品質保証
+- ✅ TypeScript による型安全性
+- ✅ ESLint + Prettier による コード品質管理
+- ✅ Vitest による単体テスト
+- ✅ Vue コンポーネントテスト
+- ✅ Pinia ストアテスト
+- ✅ CI/CD パイプライン (GitHub Actions)
+- ✅ Docker によるコンテナ化
