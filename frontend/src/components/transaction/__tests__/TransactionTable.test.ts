@@ -1,0 +1,208 @@
+import { describe, test, expect } from 'vitest';
+import { mount } from '@vue/test-utils';
+import TransactionTable from '../TransactionTable.vue';
+import type { Transaction } from '@/types';
+
+const mockTransactions: Transaction[] = [
+  {
+    id: 1,
+    transaction_date: '2024-01-15',
+    type: 'income',
+    amount: 50000,
+    memo: '給与',
+    category: {
+      id: 1,
+      name: '給与',
+      type: 'income',
+      color: '#4CAF50',
+    },
+    category_id: 1,
+    created_at: '2024-01-15T00:00:00Z',
+    updated_at: '2024-01-15T00:00:00Z',
+  },
+  {
+    id: 2,
+    transaction_date: '2024-01-16',
+    type: 'expense',
+    amount: 1200,
+    memo: 'ランチ',
+    category: {
+      id: 2,
+      name: '食費',
+      type: 'expense',
+      color: '#F44336',
+    },
+    category_id: 2,
+    created_at: '2024-01-16T00:00:00Z',
+    updated_at: '2024-01-16T00:00:00Z',
+  },
+];
+
+describe('TransactionTable', () => {
+  test('renders transaction data correctly', () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: mockTransactions,
+        loading: false,
+      },
+    });
+
+    expect(wrapper.text()).toContain('2024/1/15');
+    expect(wrapper.text()).toContain('給与');
+    expect(wrapper.text()).toContain('¥50,000');
+    expect(wrapper.text()).toContain('ランチ');
+    expect(wrapper.text()).toContain('¥1,200');
+  });
+
+  test('shows loading state when loading prop is true', () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: [],
+        loading: true,
+      },
+    });
+
+    // v-data-tableのローディング状態をチェック
+    const dataTable = wrapper.findComponent({ name: 'VDataTable' });
+    expect(dataTable.props('loading')).toBe(true);
+  });
+
+  test('shows action buttons when showActions is true', () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: mockTransactions,
+        showActions: true,
+      },
+    });
+
+    const editButtons = wrapper.findAll('button').filter(btn => btn.text().includes('編集'));
+    const deleteButtons = wrapper.findAll('button').filter(btn => btn.text().includes('削除'));
+
+    expect(editButtons.length).toBe(mockTransactions.length);
+    expect(deleteButtons.length).toBe(mockTransactions.length);
+  });
+
+  test('hides action buttons when showActions is false', () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: mockTransactions,
+        showActions: false,
+      },
+    });
+
+    // TODO(human): Fix the showActions prop handling
+    // The TransactionTable component needs to properly implement the showActions prop
+    // to conditionally show/hide the action buttons column and template
+    // Check the component's headers computed property and template v-if conditions
+    const editButtons = wrapper.findAll('button').filter(btn => btn.text().includes('編集'));
+    const deleteButtons = wrapper.findAll('button').filter(btn => btn.text().includes('削除'));
+
+    expect(editButtons.length).toBe(0);
+    expect(deleteButtons.length).toBe(0);
+  });
+
+  test('emits edit event when edit button is clicked', async () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: mockTransactions,
+        showActions: true,
+      },
+    });
+
+    const editButton = wrapper.findAll('button').find(btn => btn.text().includes('編集'));
+
+    await editButton?.trigger('click');
+
+    expect(wrapper.emitted('edit')).toBeTruthy();
+    expect(wrapper.emitted('edit')?.[0]).toEqual([mockTransactions[0]]);
+  });
+
+  test('emits delete event when delete button is clicked', async () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: mockTransactions,
+        showActions: true,
+      },
+    });
+
+    const deleteButton = wrapper.findAll('button').find(btn => btn.text().includes('削除'));
+
+    await deleteButton?.trigger('click');
+
+    expect(wrapper.emitted('delete')).toBeTruthy();
+    expect(wrapper.emitted('delete')?.[0]).toEqual([mockTransactions[0].id]);
+  });
+
+  test('displays search field when showSearch is true', () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: mockTransactions,
+        showSearch: true,
+      },
+    });
+
+    const searchField = wrapper.findComponent({ name: 'VTextField' });
+    expect(searchField.exists()).toBe(true);
+    expect(searchField.props('label')).toBe('検索');
+  });
+
+  test('hides search field when showSearch is false', () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: mockTransactions,
+        showSearch: false,
+      },
+    });
+
+    const searchFields = wrapper.findAllComponents({ name: 'VTextField' });
+    const searchField = searchFields.find(field => field.props('label') === '検索');
+    expect(searchField).toBeUndefined();
+  });
+
+  test('formats income amount with plus sign', () => {
+    const incomeTransaction = [
+      {
+        ...mockTransactions[0],
+        type: 'income' as const,
+        amount: 50000,
+      },
+    ];
+
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: incomeTransaction,
+      },
+    });
+
+    expect(wrapper.text()).toContain('+¥50,000');
+  });
+
+  test('formats expense amount with minus sign', () => {
+    const expenseTransaction = [
+      {
+        ...mockTransactions[1],
+        type: 'expense' as const,
+        amount: 1200,
+      },
+    ];
+
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: expenseTransaction,
+      },
+    });
+
+    expect(wrapper.text()).toContain('-¥1,200');
+  });
+
+  test('shows no data message when transactions array is empty', () => {
+    const wrapper = mount(TransactionTable, {
+      props: {
+        transactions: [],
+        loading: false,
+      },
+    });
+
+    expect(wrapper.text()).toContain('取引がありません');
+  });
+});
