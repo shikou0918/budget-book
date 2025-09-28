@@ -1,4 +1,4 @@
-.PHONY: help install lint lint-fix format format-check test clean
+.PHONY: help install lint lint-fix format format-check test type-check clean
 
 # デフォルトターゲット
 help:
@@ -9,6 +9,7 @@ help:
 	@echo "  format      - フロントエンドとバックエンドのコードをFormat"
 	@echo "  format-check- フロントエンドとバックエンドのコードFormatをチェック"
 	@echo "  test        - フロントエンドとバックエンドのテストを実行"
+	@echo "  type-check  - フロントエンドの型チェックを実行"
 	@echo "  clean       - ビルド成果物をクリーンアップ"
 
 # 依存関係のインストール
@@ -57,12 +58,17 @@ frontend-test:
 	@echo "フロントエンドテストを実行中..."
 	cd frontend && yarn test 2>/dev/null || echo "フロントエンドテストはまだ設定されていません"
 
+frontend-type-check:
+	@echo "フロントエンドの型チェックを実行中..."
+	cd frontend && yarn type-check
+
 # まとめて実行
 lint: backend-lint frontend-lint
 lint-fix: backend-lint-fix frontend-lint-fix
 format: backend-format frontend-format
 format-check: frontend-format-check
 test: backend-test frontend-test
+type-check: frontend-type-check
 
 # クリーンアップ
 clean:
