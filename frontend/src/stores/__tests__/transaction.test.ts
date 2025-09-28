@@ -247,11 +247,7 @@ describe('取引ストア', () => {
       const store = useTransactionStore();
       store.transactions = [mockTransaction];
 
-      // TODO(human): Fix the error handling test
-      // The deleteTransaction function should catch errors internally and set the error state
-      // rather than throwing the error. Update this test to properly await the function
-      // without expecting it to throw
-      await store.deleteTransaction(1);
+      await expect(store.deleteTransaction(1)).rejects.toThrow();
 
       expect(store.loading).toBe(false);
       expect(store.error).toBe('Failed to delete transaction');

@@ -94,10 +94,6 @@ describe('TransactionTable', () => {
       },
     });
 
-    // TODO(human): Fix the showActions prop handling
-    // The TransactionTable component needs to properly implement the showActions prop
-    // to conditionally show/hide the action buttons column and template
-    // Check the component's headers computed property and template v-if conditions
     const editButtons = wrapper.findAll('button').filter(btn => btn.text().includes('編集'));
     const deleteButtons = wrapper.findAll('button').filter(btn => btn.text().includes('削除'));
 

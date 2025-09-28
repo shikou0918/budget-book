@@ -6,6 +6,7 @@ interface Props {
   transactions: Transaction[];
   loading?: boolean;
   showSearch?: boolean;
+  showActions?: boolean;
   itemsPerPage?: number;
   height?: string | number;
 }
@@ -15,21 +16,30 @@ interface Emits {
   (e: 'delete', id: number): void;
 }
 
-// データテーブルのヘッダー定義
-const headers = computed(() => [
-  { title: '日付', value: 'transaction_date', sortable: true },
-  { title: '種別', value: 'type', sortable: true },
-  { title: 'カテゴリ', value: 'category.name', sortable: true },
-  { title: '金額', value: 'amount', sortable: true },
-  { title: 'メモ', value: 'memo', sortable: false },
-  { title: '操作', value: 'actions', sortable: false, width: '120px' },
-]);
-
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   loading: false,
   showSearch: true,
+  showActions: true,
   itemsPerPage: 10,
 });
+
+// データテーブルのヘッダー定義
+const headers = computed(() => {
+  const baseHeaders = [
+    { title: '日付', value: 'transaction_date', sortable: true },
+    { title: '種別', value: 'type', sortable: true },
+    { title: 'カテゴリ', value: 'category.name', sortable: true },
+    { title: '金額', value: 'amount', sortable: true },
+    { title: 'メモ', value: 'memo', sortable: false },
+  ];
+
+  if (props.showActions) {
+    baseHeaders.push({ title: '操作', value: 'actions', sortable: false, width: '120px' });
+  }
+
+  return baseHeaders;
+});
+
 
 const emit = defineEmits<Emits>();
 
@@ -57,15 +67,15 @@ const handleDelete = (id: number) => {
     <v-data-table
       :headers="headers"
       :items="transactions"
-      :search="showSearch ? search : undefined"
-      :loading="loading"
+      :search="props.showSearch ? search : undefined"
+      :loading="props.loading"
       class="elevation-1"
-      :items-per-page="itemsPerPage"
+      :items-per-page="props.itemsPerPage"
       :items-per-page-options="[5, 10, 25, 50]"
-      :height="height"
+      :height="props.height"
     >
       <!-- 検索フィールド -->
-      <template v-if="showSearch" #top>
+      <template v-if="props.showSearch" #top>
         <v-toolbar flat>
           <v-spacer></v-spacer>
           <v-text-field
@@ -115,7 +125,7 @@ const handleDelete = (id: number) => {
       </template>
 
       <!-- 操作ボタン -->
-      <template #[`item.actions`]="{ item }">
+      <template v-if="props.showActions" #[`item.actions`]="{ item }">
         <v-btn
           color="primary"
           variant="outlined"
