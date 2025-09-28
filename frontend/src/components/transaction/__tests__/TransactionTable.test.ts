@@ -39,7 +39,7 @@ const mockTransactions: Transaction[] = [
 ];
 
 describe('TransactionTable', () => {
-  test('renders transaction data correctly', () => {
+  test('取引データが正しく表示される', () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: mockTransactions,
@@ -54,7 +54,7 @@ describe('TransactionTable', () => {
     expect(wrapper.text()).toContain('¥1,200');
   });
 
-  test('shows loading state when loading prop is true', () => {
+  test('loading propがtrueの時にローディング状態を表示する', () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: [],
@@ -67,7 +67,7 @@ describe('TransactionTable', () => {
     expect(dataTable.props('loading')).toBe(true);
   });
 
-  test('shows action buttons when showActions is true', () => {
+  test('showActionsがtrueの時にアクションボタンを表示する', () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: mockTransactions,
@@ -82,7 +82,7 @@ describe('TransactionTable', () => {
     expect(deleteButtons.length).toBe(mockTransactions.length);
   });
 
-  test('hides action buttons when showActions is false', () => {
+  test('showActionsがfalseの時にアクションボタンを非表示にする', () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: mockTransactions,
@@ -101,7 +101,7 @@ describe('TransactionTable', () => {
     expect(deleteButtons.length).toBe(0);
   });
 
-  test('emits edit event when edit button is clicked', async () => {
+  test('編集ボタンをクリックした時にeditイベントを発行する', async () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: mockTransactions,
@@ -117,7 +117,7 @@ describe('TransactionTable', () => {
     expect(wrapper.emitted('edit')?.[0]).toEqual([mockTransactions[0]]);
   });
 
-  test('emits delete event when delete button is clicked', async () => {
+  test('削除ボタンをクリックした時にdeleteイベントを発行する', async () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: mockTransactions,
@@ -133,7 +133,7 @@ describe('TransactionTable', () => {
     expect(wrapper.emitted('delete')?.[0]).toEqual([mockTransactions[0].id]);
   });
 
-  test('displays search field when showSearch is true', () => {
+  test('showSearchがtrueの時に検索フィールドを表示する', () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: mockTransactions,
@@ -146,7 +146,7 @@ describe('TransactionTable', () => {
     expect(searchField.props('label')).toBe('検索');
   });
 
-  test('hides search field when showSearch is false', () => {
+  test('showSearchがfalseの時に検索フィールドを非表示にする', () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: mockTransactions,
@@ -159,7 +159,7 @@ describe('TransactionTable', () => {
     expect(searchField).toBeUndefined();
   });
 
-  test('formats income amount with plus sign', () => {
+  test('収入金額をプラス記号付きでフォーマットする', () => {
     const incomeTransaction = [
       {
         ...mockTransactions[0],
@@ -177,7 +177,7 @@ describe('TransactionTable', () => {
     expect(wrapper.text()).toContain('+¥50,000');
   });
 
-  test('formats expense amount with minus sign', () => {
+  test('支出金額をマイナス記号付きでフォーマットする', () => {
     const expenseTransaction = [
       {
         ...mockTransactions[1],
@@ -195,7 +195,7 @@ describe('TransactionTable', () => {
     expect(wrapper.text()).toContain('-¥1,200');
   });
 
-  test('shows no data message when transactions array is empty', () => {
+  test('取引配列が空の時にデータなしメッセージを表示する', () => {
     const wrapper = mount(TransactionTable, {
       props: {
         transactions: [],

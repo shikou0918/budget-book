@@ -44,13 +44,13 @@ const mockCreateRequest: CreateTransactionRequest = {
   category_id: 1,
 };
 
-describe('useTransactionStore', () => {
+describe('取引ストア', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
   });
 
-  test('initializes with empty state', () => {
+  test('初期状態が空で初期化される', () => {
     const store = useTransactionStore();
 
     expect(store.transactions).toEqual([]);
@@ -58,8 +58,8 @@ describe('useTransactionStore', () => {
     expect(store.error).toBe(null);
   });
 
-  describe('fetchTransactions', () => {
-    test('successfully fetches transactions', async () => {
+  describe('取引データ取得', () => {
+    test('取引データを正常に取得する', async () => {
       const mockTransactions = [mockTransaction];
       mockTransactionApi.getAll.mockResolvedValue({ data: mockTransactions });
 
@@ -72,7 +72,7 @@ describe('useTransactionStore', () => {
       expect(mockTransactionApi.getAll).toHaveBeenCalledOnce();
     });
 
-    test('handles fetch error', async () => {
+    test('取得エラーを処理する', async () => {
       mockTransactionApi.getAll.mockRejectedValue(new Error('Network error'));
 
       const store = useTransactionStore();
@@ -83,7 +83,7 @@ describe('useTransactionStore', () => {
       expect(store.transactions).toEqual([]);
     });
 
-    test('sets loading state during fetch', async () => {
+    test('取得中にローディング状態を設定する', async () => {
       let resolvePromise: (value: AxiosResponse<Transaction[]>) => void;
       const promise = new Promise<AxiosResponse<Transaction[]>>(resolve => {
         resolvePromise = resolve;
@@ -102,8 +102,8 @@ describe('useTransactionStore', () => {
     });
   });
 
-  describe('createTransaction', () => {
-    test('successfully creates transaction', async () => {
+  describe('取引作成', () => {
+    test('取引を正常に作成する', async () => {
       mockTransactionApi.create.mockResolvedValue({ data: mockTransaction });
 
       const store = useTransactionStore();
@@ -116,7 +116,7 @@ describe('useTransactionStore', () => {
       expect(mockTransactionApi.create).toHaveBeenCalledWith(mockCreateRequest);
     });
 
-    test('handles create error', async () => {
+    test('作成エラーを処理する', async () => {
       mockTransactionApi.create.mockRejectedValue(new Error('Create failed'));
 
       const store = useTransactionStore();
@@ -127,7 +127,7 @@ describe('useTransactionStore', () => {
       expect(store.transactions).toEqual([]);
     });
 
-    test('adds new transaction to beginning of list', async () => {
+    test('新しい取引をリストの先頭に追加する', async () => {
       const existingTransaction = { ...mockTransaction, id: 2 };
       const newTransaction = { ...mockTransaction, id: 3 };
 
@@ -142,8 +142,8 @@ describe('useTransactionStore', () => {
     });
   });
 
-  describe('updateTransaction', () => {
-    test('successfully updates transaction', async () => {
+  describe('取引更新', () => {
+    test('取引を正常に更新する', async () => {
       const updatedTransaction = { ...mockTransaction, amount: 60000 };
       mockTransactionApi.update.mockResolvedValue({ data: updatedTransaction });
 
@@ -159,7 +159,7 @@ describe('useTransactionStore', () => {
       expect(mockTransactionApi.update).toHaveBeenCalledWith(1, mockCreateRequest);
     });
 
-    test('handles update error', async () => {
+    test('更新エラーを処理する', async () => {
       mockTransactionApi.update.mockRejectedValue(new Error('Update failed'));
 
       const store = useTransactionStore();
@@ -171,7 +171,7 @@ describe('useTransactionStore', () => {
       expect(store.transactions).toEqual([mockTransaction]); // unchanged
     });
 
-    test('does not update if transaction not found', async () => {
+    test('取引が見つからない場合は更新しない', async () => {
       const updatedTransaction = { ...mockTransaction, id: 999 };
       mockTransactionApi.update.mockResolvedValue({ data: updatedTransaction });
 
@@ -184,8 +184,8 @@ describe('useTransactionStore', () => {
     });
   });
 
-  describe('deleteTransaction', () => {
-    test('successfully deletes transaction', async () => {
+  describe('取引削除', () => {
+    test('取引を正常に削除する', async () => {
       mockTransactionApi.delete.mockResolvedValue({});
 
       const store = useTransactionStore();
@@ -199,7 +199,7 @@ describe('useTransactionStore', () => {
       expect(mockTransactionApi.delete).toHaveBeenCalledWith(1);
     });
 
-    test('handles delete error', async () => {
+    test('削除エラーを処理する', async () => {
       mockTransactionApi.delete.mockRejectedValue(new Error('Delete failed'));
 
       const store = useTransactionStore();
@@ -216,7 +216,7 @@ describe('useTransactionStore', () => {
       expect(store.transactions).toEqual([mockTransaction]); // unchanged
     });
 
-    test('removes only the specified transaction', async () => {
+    test('指定された取引のみを削除する', async () => {
       const transaction1 = { ...mockTransaction, id: 1 };
       const transaction2 = { ...mockTransaction, id: 2 };
       mockTransactionApi.delete.mockResolvedValue({});
