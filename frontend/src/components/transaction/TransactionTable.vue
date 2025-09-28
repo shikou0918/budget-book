@@ -34,7 +34,7 @@ const headers = computed(() => {
   ];
 
   if (props.showActions) {
-    baseHeaders.push({ title: '操作', value: 'actions', sortable: false, width: '120px' });
+    baseHeaders.push({ title: '操作', value: 'actions', sortable: false });
   }
 
   return baseHeaders;
