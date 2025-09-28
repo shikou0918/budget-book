@@ -66,7 +66,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
 
       const store = useTransactionStore();
@@ -106,7 +106,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
       await fetchPromise;
 
@@ -121,7 +121,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
 
       const store = useTransactionStore();
@@ -154,7 +154,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
 
       const store = useTransactionStore();
@@ -174,7 +174,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
 
       const store = useTransactionStore();
@@ -208,7 +208,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
 
       const store = useTransactionStore();
@@ -227,7 +227,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
 
       const store = useTransactionStore();
@@ -266,7 +266,7 @@ describe('取引ストア', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {} as any
+        config: {} as any,
       });
 
       const store = useTransactionStore();
