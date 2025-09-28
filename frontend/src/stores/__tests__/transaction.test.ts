@@ -61,7 +61,13 @@ describe('取引ストア', () => {
   describe('取引データ取得', () => {
     test('取引データを正常に取得する', async () => {
       const mockTransactions = [mockTransaction];
-      mockTransactionApi.getAll.mockResolvedValue({ data: mockTransactions });
+      mockTransactionApi.getAll.mockResolvedValue({
+        data: mockTransactions,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
 
       const store = useTransactionStore();
       await store.fetchTransactions();
@@ -95,7 +101,13 @@ describe('取引ストア', () => {
 
       expect(store.loading).toBe(true);
 
-      resolvePromise!({ data: [mockTransaction] } as AxiosResponse<Transaction[]>);
+      resolvePromise!({
+        data: [mockTransaction],
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
       await fetchPromise;
 
       expect(store.loading).toBe(false);
@@ -104,7 +116,13 @@ describe('取引ストア', () => {
 
   describe('取引作成', () => {
     test('取引を正常に作成する', async () => {
-      mockTransactionApi.create.mockResolvedValue({ data: mockTransaction });
+      mockTransactionApi.create.mockResolvedValue({
+        data: mockTransaction,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
 
       const store = useTransactionStore();
       const result = await store.createTransaction(mockCreateRequest);
@@ -131,7 +149,13 @@ describe('取引ストア', () => {
       const existingTransaction = { ...mockTransaction, id: 2 };
       const newTransaction = { ...mockTransaction, id: 3 };
 
-      mockTransactionApi.create.mockResolvedValue({ data: newTransaction });
+      mockTransactionApi.create.mockResolvedValue({
+        data: newTransaction,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
 
       const store = useTransactionStore();
       store.transactions = [existingTransaction];
@@ -145,7 +169,13 @@ describe('取引ストア', () => {
   describe('取引更新', () => {
     test('取引を正常に更新する', async () => {
       const updatedTransaction = { ...mockTransaction, amount: 60000 };
-      mockTransactionApi.update.mockResolvedValue({ data: updatedTransaction });
+      mockTransactionApi.update.mockResolvedValue({
+        data: updatedTransaction,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
 
       const store = useTransactionStore();
       store.transactions = [mockTransaction];
@@ -173,7 +203,13 @@ describe('取引ストア', () => {
 
     test('取引が見つからない場合は更新しない', async () => {
       const updatedTransaction = { ...mockTransaction, id: 999 };
-      mockTransactionApi.update.mockResolvedValue({ data: updatedTransaction });
+      mockTransactionApi.update.mockResolvedValue({
+        data: updatedTransaction,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
 
       const store = useTransactionStore();
       store.transactions = [mockTransaction];
@@ -186,7 +222,13 @@ describe('取引ストア', () => {
 
   describe('取引削除', () => {
     test('取引を正常に削除する', async () => {
-      mockTransactionApi.delete.mockResolvedValue({});
+      mockTransactionApi.delete.mockResolvedValue({
+        data: {},
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
 
       const store = useTransactionStore();
       store.transactions = [mockTransaction];
@@ -219,7 +261,13 @@ describe('取引ストア', () => {
     test('指定された取引のみを削除する', async () => {
       const transaction1 = { ...mockTransaction, id: 1 };
       const transaction2 = { ...mockTransaction, id: 2 };
-      mockTransactionApi.delete.mockResolvedValue({});
+      mockTransactionApi.delete.mockResolvedValue({
+        data: {},
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {} as any
+      });
 
       const store = useTransactionStore();
       store.transactions = [transaction1, transaction2];
