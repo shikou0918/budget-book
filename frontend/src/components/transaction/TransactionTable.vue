@@ -40,7 +40,6 @@ const headers = computed(() => {
   return baseHeaders;
 });
 
-
 const emit = defineEmits<Emits>();
 
 const search = ref('');
