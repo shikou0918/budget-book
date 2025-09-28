@@ -66,7 +66,7 @@ func (r *CategoryRepository) GetAll() ([]*entity.Category, error) {
 }
 
 // GetByType retrieves all categories of a specific type
-func (r *CategoryRepository) GetByType(categoryType entity.CategoryType) ([]*entity.Category, error) {
+func (r *CategoryRepository) GetByType(categoryType entity.TransactionType) ([]*entity.Category, error) {
 	var categories []*entity.Category
 	result := r.db.Where("type = ?", categoryType).Order("name ASC").Find(&categories)
 	if result.Error != nil {
@@ -116,7 +116,7 @@ func (r *CategoryRepository) Delete(id uint64) error {
 }
 
 // ExistsByNameAndType checks if a category exists with the given name and type
-func (r *CategoryRepository) ExistsByNameAndType(name string, categoryType entity.CategoryType) (bool, error) {
+func (r *CategoryRepository) ExistsByNameAndType(name string, categoryType entity.TransactionType) (bool, error) {
 	var count int64
 	result := r.db.Model(&entity.Category{}).Where("name = ? AND type = ?", name, categoryType).Count(&count)
 	if result.Error != nil {

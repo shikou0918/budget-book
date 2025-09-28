@@ -2,16 +2,25 @@ package handler
 
 import (
 	"budget-book/entity"
-	"budget-book/usecase"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
+// CategoryUseCaseInterface defines the interface for category use case
+type CategoryUseCaseInterface interface {
+	CreateCategory(name string, categoryType entity.TransactionType, color string) (*entity.Category, error)
+	GetCategoryByID(id uint64) (*entity.Category, error)
+	GetAllCategories() ([]*entity.Category, error)
+	GetCategoriesByType(categoryType entity.TransactionType) ([]*entity.Category, error)
+	UpdateCategory(id uint64, name string, categoryType entity.TransactionType, color string) (*entity.Category, error)
+	DeleteCategory(id uint64) error
+}
+
 // CategoryHandler handles category HTTP requests
 type CategoryHandler struct {
-	usecase *usecase.CategoryUseCase
+	usecase CategoryUseCaseInterface
 }
 
 // CreateCategoryRequest represents the request body for creating a category
@@ -29,7 +38,7 @@ type UpdateCategoryRequest struct {
 }
 
 // NewCategoryHandler creates a new category handler instance
-func NewCategoryHandler(usecase *usecase.CategoryUseCase) *CategoryHandler {
+func NewCategoryHandler(usecase CategoryUseCaseInterface) *CategoryHandler {
 	return &CategoryHandler{usecase: usecase}
 }
 
@@ -44,7 +53,7 @@ func (h *CategoryHandler) CreateCategory(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	categoryType := entity.CategoryType(req.Type)
+	categoryType := entity.TransactionType(req.Type)
 	category, err := h.usecase.CreateCategory(req.Name, categoryType, req.Color)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
@@ -80,7 +89,7 @@ func (h *CategoryHandler) GetCategories(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid category type. Use 'income' or 'expense'"})
 		}
 
-		categories, err := h.usecase.GetCategoriesByType(entity.CategoryType(categoryType))
+		categories, err := h.usecase.GetCategoriesByType(entity.TransactionType(categoryType))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
@@ -111,7 +120,7 @@ func (h *CategoryHandler) UpdateCategory(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": validErr.Error()})
 	}
 
-	categoryType := entity.CategoryType(req.Type)
+	categoryType := entity.TransactionType(req.Type)
 	category, err := h.usecase.UpdateCategory(id, req.Name, categoryType, req.Color)
 	if err != nil {
 		if _, ok := err.(*entity.NotFoundError); ok {

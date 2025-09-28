@@ -2,7 +2,6 @@ package handler
 
 import (
 	"budget-book/entity"
-	"budget-book/usecase"
 	"net/http"
 	"strconv"
 	"time"
@@ -10,9 +9,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// TransactionUseCaseInterface defines the interface for transaction use case
+type TransactionUseCaseInterface interface {
+	CreateTransaction(transactionType entity.TransactionType, amount float64, categoryID uint64, transactionDate time.Time, memo string) (*entity.Transaction, error)
+	GetTransactionByID(id uint64) (*entity.Transaction, error)
+	GetAllTransactions() ([]*entity.Transaction, error)
+	GetTransactionsByDateRange(startDate, endDate time.Time) ([]*entity.Transaction, error)
+	GetTransactionsByCategory(categoryID uint64) ([]*entity.Transaction, error)
+	GetTransactionsByMonth(year, month int) ([]*entity.Transaction, error)
+	UpdateTransaction(id uint64, transactionType entity.TransactionType, amount float64, categoryID uint64, transactionDate time.Time, memo string) (*entity.Transaction, error)
+	DeleteTransaction(id uint64) error
+}
+
 // TransactionHandler handles transaction HTTP requests
 type TransactionHandler struct {
-	usecase *usecase.TransactionUseCase
+	usecase TransactionUseCaseInterface
 }
 
 // CreateTransactionRequest represents the request body for creating a transaction
@@ -34,7 +45,7 @@ type UpdateTransactionRequest struct {
 }
 
 // NewTransactionHandler creates a new transaction handler instance
-func NewTransactionHandler(usecase *usecase.TransactionUseCase) *TransactionHandler {
+func NewTransactionHandler(usecase TransactionUseCaseInterface) *TransactionHandler {
 	return &TransactionHandler{usecase: usecase}
 }
 

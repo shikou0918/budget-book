@@ -1,20 +1,26 @@
 package handler
 
 import (
-	"budget-book/usecase"
+	"budget-book/entity"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
+// SummaryUseCaseInterface defines the interface for summary use case
+type SummaryUseCaseInterface interface {
+	GetMonthlySummary(year, month int) (*entity.MonthlySummary, error)
+	GetCategoryTotals(year, month int) (map[uint64]float64, error)
+}
+
 // SummaryHandler handles summary HTTP requests
 type SummaryHandler struct {
-	usecase *usecase.SummaryUseCase
+	usecase SummaryUseCaseInterface
 }
 
 // NewSummaryHandler creates a new summary handler instance
-func NewSummaryHandler(usecase *usecase.SummaryUseCase) *SummaryHandler {
+func NewSummaryHandler(usecase SummaryUseCaseInterface) *SummaryHandler {
 	return &SummaryHandler{usecase: usecase}
 }
 

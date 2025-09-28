@@ -2,18 +2,17 @@ package usecase
 
 import (
 	"budget-book/entity"
-	"budget-book/infrastructure/repository"
 )
 
 // SummaryUseCase handles summary business logic
 type SummaryUseCase struct {
-	transactionRepo *repository.TransactionRepository
-	categoryRepo    *repository.CategoryRepository
-	budgetRepo      *repository.BudgetRepository
+	transactionRepo TransactionRepositoryInterface
+	categoryRepo    CategoryRepositoryInterface
+	budgetRepo      BudgetRepositoryInterface
 }
 
 // NewSummaryUseCase creates a new summary use case instance
-func NewSummaryUseCase(transactionRepo *repository.TransactionRepository, categoryRepo *repository.CategoryRepository, budgetRepo *repository.BudgetRepository) *SummaryUseCase {
+func NewSummaryUseCase(transactionRepo TransactionRepositoryInterface, categoryRepo CategoryRepositoryInterface, budgetRepo BudgetRepositoryInterface) *SummaryUseCase {
 	return &SummaryUseCase{
 		transactionRepo: transactionRepo,
 		categoryRepo:    categoryRepo,

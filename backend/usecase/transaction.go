@@ -2,18 +2,39 @@ package usecase
 
 import (
 	"budget-book/entity"
-	"budget-book/infrastructure/repository"
 	"time"
 )
 
-// TransactionUseCase handles transaction business logic
-type TransactionUseCase struct {
-	transactionRepo *repository.TransactionRepository
-	categoryRepo    *repository.CategoryRepository
+// TransactionRepositoryInterface defines the interface for transaction repository
+type TransactionRepositoryInterface interface {
+	Create(transaction *entity.Transaction) error
+	GetByID(id uint64) (*entity.Transaction, error)
+	GetAll() ([]*entity.Transaction, error)
+	GetByDateRange(startDate, endDate time.Time) ([]*entity.Transaction, error)
+	GetByCategory(categoryID uint64) ([]*entity.Transaction, error)
+	GetByMonth(year, month int) ([]*entity.Transaction, error)
+	Update(transaction *entity.Transaction) error
+	Delete(id uint64) error
 }
 
-// NewTransactionUseCase creates a new transaction use case instance
-func NewTransactionUseCase(transactionRepo *repository.TransactionRepository, categoryRepo *repository.CategoryRepository) *TransactionUseCase {
+// CategoryRepositoryInterface defines the interface for category repository
+type CategoryRepositoryInterface interface {
+	Create(category *entity.Category) error
+	GetByID(id uint64) (*entity.Category, error)
+	GetAll() ([]*entity.Category, error)
+	GetByType(categoryType entity.TransactionType) ([]*entity.Category, error)
+	Update(category *entity.Category) error
+	Delete(id uint64) error
+}
+
+// TransactionUseCase handles transaction business logic
+type TransactionUseCase struct {
+	transactionRepo TransactionRepositoryInterface
+	categoryRepo    CategoryRepositoryInterface
+}
+
+// NewTransactionUseCase creates a new TransactionUseCase with the provided repositories
+func NewTransactionUseCase(transactionRepo TransactionRepositoryInterface, categoryRepo CategoryRepositoryInterface) *TransactionUseCase {
 	return &TransactionUseCase{
 		transactionRepo: transactionRepo,
 		categoryRepo:    categoryRepo,

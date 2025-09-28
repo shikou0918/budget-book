@@ -2,17 +2,27 @@ package usecase
 
 import (
 	"budget-book/entity"
-	"budget-book/infrastructure/repository"
 )
+
+// BudgetRepositoryInterface defines the interface for budget repository
+type BudgetRepositoryInterface interface {
+	Create(budget *entity.Budget) error
+	GetByID(id uint64) (*entity.Budget, error)
+	GetAll() ([]*entity.Budget, error)
+	GetByMonth(year, month int) ([]*entity.Budget, error)
+	GetByCategoryAndMonth(categoryID uint64, year, month int) (*entity.Budget, error)
+	Update(budget *entity.Budget) error
+	Delete(id uint64) error
+}
 
 // BudgetUseCase handles budget business logic
 type BudgetUseCase struct {
-	budgetRepo   *repository.BudgetRepository
-	categoryRepo *repository.CategoryRepository
+	budgetRepo   BudgetRepositoryInterface
+	categoryRepo CategoryRepositoryInterface
 }
 
 // NewBudgetUseCase creates a new budget use case instance
-func NewBudgetUseCase(budgetRepo *repository.BudgetRepository, categoryRepo *repository.CategoryRepository) *BudgetUseCase {
+func NewBudgetUseCase(budgetRepo BudgetRepositoryInterface, categoryRepo CategoryRepositoryInterface) *BudgetUseCase {
 	return &BudgetUseCase{
 		budgetRepo:   budgetRepo,
 		categoryRepo: categoryRepo,
@@ -26,7 +36,7 @@ func (uc *BudgetUseCase) CreateBudget(categoryID uint64, amount float64, targetY
 		return nil, err
 	}
 
-	if category.Type != entity.CategoryTypeExpense {
+	if category.Type != entity.TransactionTypeExpense {
 		return nil, entity.NewValidationError("budget can only be set for expense categories")
 	}
 
@@ -70,7 +80,7 @@ func (uc *BudgetUseCase) UpdateBudget(id uint64, categoryID uint64, amount float
 		return nil, err
 	}
 
-	if category.Type != entity.CategoryTypeExpense {
+	if category.Type != entity.TransactionTypeExpense {
 		return nil, entity.NewValidationError("budget can only be set for expense categories")
 	}
 

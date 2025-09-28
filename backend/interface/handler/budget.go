@@ -2,16 +2,26 @@ package handler
 
 import (
 	"budget-book/entity"
-	"budget-book/usecase"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
+// BudgetUseCaseInterface defines the interface for budget use case
+type BudgetUseCaseInterface interface {
+	CreateBudget(categoryID uint64, amount float64, targetYear, targetMonth int) (*entity.Budget, error)
+	GetBudgetByID(id uint64) (*entity.Budget, error)
+	GetAllBudgets() ([]*entity.Budget, error)
+	GetBudgetsByMonth(year, month int) ([]*entity.Budget, error)
+	GetBudgetByCategoryAndMonth(categoryID uint64, year, month int) (*entity.Budget, error)
+	UpdateBudget(id uint64, categoryID uint64, amount float64, targetYear, targetMonth int) (*entity.Budget, error)
+	DeleteBudget(id uint64) error
+}
+
 // BudgetHandler handles budget HTTP requests
 type BudgetHandler struct {
-	usecase *usecase.BudgetUseCase
+	usecase BudgetUseCaseInterface
 }
 
 // CreateBudgetRequest represents the request body for creating a budget
@@ -31,7 +41,7 @@ type UpdateBudgetRequest struct {
 }
 
 // NewBudgetHandler creates a new budget handler instance
-func NewBudgetHandler(usecase *usecase.BudgetUseCase) *BudgetHandler {
+func NewBudgetHandler(usecase BudgetUseCaseInterface) *BudgetHandler {
 	return &BudgetHandler{usecase: usecase}
 }
 
