@@ -9,7 +9,10 @@
 - **Echo v4** - Web フレームワーク
 - **GORM** - ORM
 - **MySQL** 8.0 - データベース
+- **SQLite** - テスト用データベース
 - **Validator v9** - バリデーション
+- **Testify** - テストライブラリ
+- **mockgen** - モック生成ツール
 
 ### Frontend
 - **Vue 3** - フロントエンドフレームワーク
@@ -34,10 +37,20 @@
 .
 ├── backend/                 # Go API サーバー
 │   ├── cmd/api/            # アプリケーションエントリーポイント
-│   ├── entity/             # エンティティ定義
-│   ├── usecase/            # ビジネスロジック
-│   ├── infrastructure/     # データベース・リポジトリ
-│   ├── interface/          # ハンドラー・ミドルウェア
+│   ├── entity/             # エンティティ定義・ドメインロジック
+│   │   └── *_test.go       # エンティティテスト
+│   ├── usecase/            # ビジネスロジック・リポジトリインターフェース
+│   │   └── *_test.go       # ユースケーステスト（モック使用）
+│   ├── infrastructure/     # データベース・リポジトリ実装
+│   │   ├── database/       # データベース接続
+│   │   └── repository/     # リポジトリ実装
+│   ├── interface/          # HTTP ハンドラー・ミドルウェア・ユースケースインターフェース
+│   │   ├── handler/        # HTTP ハンドラー
+│   │   │   └── *_test.go   # ハンドラーテスト・統合テスト
+│   │   └── middleware/     # ミドルウェア
+│   ├── mocks/              # テスト用モック（mockgen 生成）
+│   │   ├── repository/     # リポジトリモック
+│   │   └── usecase/        # ユースケースモック
 │   ├── config/             # 設定管理
 │   └── migrations/         # データベースマイグレーション
 ├── frontend/               # Vue.js フロントエンド
@@ -123,8 +136,30 @@ make format-check
 # テスト実行
 make test
 
+# 型チェック実行
+make type-check
+
 # ビルド成果物削除
 make clean
+```
+
+### バックエンドテスト
+
+```bash
+cd backend
+
+# 全テスト実行
+go test ./...
+
+# 詳細表示でテスト実行
+go test -v ./...
+
+# カバレッジ付きでテスト実行
+go test -cover ./...
+
+# 特定パッケージのテスト実行
+go test ./usecase/
+go test ./interface/handler/
 ```
 
 ### フロントエンドテスト
@@ -147,12 +182,22 @@ yarn test:coverage
 
 ### テスト構成
 
+#### フロントエンド
 - **ユニットテスト**: Vitest + Vue Test Utils
   - `src/components/**/__tests__/` - Vue コンポーネントテスト
   - `src/stores/__tests__/` - Pinia ストアテスト
   - `src/utils/__tests__/` - ユーティリティ関数テスト
 - **モック**: vi.mock() でAPI呼び出しをモック
 - **テスト環境**: jsdom でブラウザ環境をシミュレーション
+
+#### バックエンド
+- **ユニットテスト**: Go標準のtesting + testify
+  - `entity/*_test.go` - エンティティ・ドメインロジックテスト
+  - `usecase/*_test.go` - ビジネスロジックテスト（モック使用）
+  - `interface/handler/*_test.go` - HTTPハンドラーテスト
+- **統合テスト**: 実際のデータベース（SQLite）を使用したE2Eテスト
+- **モック**: mockgen で生成されたタイプセーフなモック
+- **アーキテクチャ**: クリーンアーキテクチャ + 依存性逆転原則に基づくテスト設計
 
 ## API エンドポイント
 
@@ -204,8 +249,14 @@ atlas migrate apply --url "mysql://root:password@localhost:3306/budget_book"
 ### 開発・品質保証
 - ✅ TypeScript による型安全性
 - ✅ ESLint + Prettier による コード品質管理
-- ✅ Vitest による単体テスト
+- ✅ Go による静的型付け・コンパイル時チェック
+- ✅ Vitest による単体テスト（フロントエンド）
+- ✅ Go testing + testify による単体テスト（バックエンド）
 - ✅ Vue コンポーネントテスト
 - ✅ Pinia ストアテスト
+- ✅ mockgen によるタイプセーフなモック生成
+- ✅ 統合テスト（HTTPハンドラー + データベース）
+- ✅ クリーンアーキテクチャによる保守性の高い設計
+- ✅ 依存性逆転原則に基づくテスタブルな構造
 - ✅ CI/CD パイプライン (GitHub Actions)
 - ✅ Docker によるコンテナ化
