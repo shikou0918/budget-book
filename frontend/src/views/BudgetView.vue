@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { budgetApi } from '@/services/api';
-import BudgetModal from '@/components/budget/BudgetModal.vue';
+import BudgetDialog from '@/components/budget/BudgetDialog.vue';
 import type { Budget, CreateBudgetRequest } from '@/types';
 
 const budgets = ref<Budget[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const showCreateModal = ref(false);
-const showEditModal = ref(false);
+const showCreateDialog = ref(false);
+const showEditDialog = ref(false);
 const editingBudget = ref<Budget | null>(null);
 
 const formatNumber = (num: number) => {
@@ -30,7 +30,7 @@ const fetchBudgets = async () => {
 
 const editBudget = (budget: Budget) => {
   editingBudget.value = budget;
-  showEditModal.value = true;
+  showEditDialog.value = true;
 };
 
 const deleteBudget = async (id: number) => {
@@ -44,9 +44,9 @@ const deleteBudget = async (id: number) => {
   }
 };
 
-const closeModal = () => {
-  showCreateModal.value = false;
-  showEditModal.value = false;
+const closeDialog = () => {
+  showCreateDialog.value = false;
+  showEditDialog.value = false;
   editingBudget.value = null;
 };
 
@@ -62,7 +62,7 @@ const handleSave = async (data: CreateBudgetRequest) => {
       const response = await budgetApi.create(data);
       budgets.value.unshift(response.data);
     }
-    closeModal();
+    closeDialog();
   } catch (err) {
     alert('予算の保存に失敗しました');
   }
@@ -77,7 +77,7 @@ onMounted(() => {
   <div class="budgets">
     <div class="page-header">
       <h2>予算管理</h2>
-      <button class="btn btn-primary" @click="showCreateModal = true">新規予算</button>
+      <button class="btn btn-primary" @click="showCreateDialog = true">新規予算</button>
     </div>
 
     <div class="card">
@@ -110,11 +110,11 @@ onMounted(() => {
       </div>
     </div>
 
-    <BudgetModal
-      v-if="showCreateModal || showEditModal"
-      :show="showCreateModal || showEditModal"
+    <BudgetDialog
+      v-if="showCreateDialog || showEditDialog"
+      :show="showCreateDialog || showEditDialog"
       :budget="editingBudget"
-      @close="closeModal"
+      @close="closeDialog"
       @save="handleSave"
     />
   </div>

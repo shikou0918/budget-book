@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useCategoryStore } from '@/stores/category';
-import CategoryModal from '@/components/category/CategoryModal.vue';
+import CategoryDialog from '@/components/category/CategoryDialog.vue';
 import type { Category, CreateCategoryRequest } from '@/types';
 
 const categoryStore = useCategoryStore();
 const { loading, error } = categoryStore;
 
-const showCreateModal = ref(false);
-const showEditModal = ref(false);
+const showCreateDialog = ref(false);
+const showEditDialog = ref(false);
 const editingCategory = ref<Category | null>(null);
 
 const incomeCategories = computed(() => categoryStore.getIncomeCategories());
@@ -16,7 +16,7 @@ const expenseCategories = computed(() => categoryStore.getExpenseCategories());
 
 const editCategory = (category: Category) => {
   editingCategory.value = category;
-  showEditModal.value = true;
+  showEditDialog.value = true;
 };
 
 const deleteCategory = async (id: number) => {
@@ -29,9 +29,9 @@ const deleteCategory = async (id: number) => {
   }
 };
 
-const closeModal = () => {
-  showCreateModal.value = false;
-  showEditModal.value = false;
+const closeDialog = () => {
+  showCreateDialog.value = false;
+  showEditDialog.value = false;
   editingCategory.value = null;
 };
 
@@ -42,7 +42,7 @@ const handleSave = async (data: CreateCategoryRequest) => {
     } else {
       await categoryStore.createCategory(data);
     }
-    closeModal();
+    closeDialog();
   } catch (err) {
     alert('カテゴリの保存に失敗しました。');
   }
@@ -57,7 +57,7 @@ onMounted(() => {
   <div class="categories">
     <div class="page-header">
       <h2>カテゴリ管理</h2>
-      <button class="btn btn-primary" @click="showCreateModal = true">新規カテゴリ</button>
+      <button class="btn btn-primary" @click="showCreateDialog = true">新規カテゴリ</button>
     </div>
 
     <div class="category-grid">
@@ -96,11 +96,11 @@ onMounted(() => {
       </div>
     </div>
 
-    <CategoryModal
-      v-if="showCreateModal || showEditModal"
-      :show="showCreateModal || showEditModal"
+    <CategoryDialog
+      v-if="showCreateDialog || showEditDialog"
+      :show="showCreateDialog || showEditDialog"
       :category="editingCategory"
-      @close="closeModal"
+      @close="closeDialog"
       @save="handleSave"
     />
   </div>

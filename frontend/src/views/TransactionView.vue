@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useTransactionStore } from '@/stores/transaction';
-import TransactionModal from '@/components/transaction/TransactionModal.vue';
+import TransactionDialog from '@/components/transaction/TransactionDialog.vue';
 import type { Transaction, CreateTransactionRequest } from '@/types';
 import { storeToRefs } from 'pinia';
 import TransactionTable from '@/components/transaction/TransactionTable.vue';
@@ -9,12 +9,12 @@ import TransactionTable from '@/components/transaction/TransactionTable.vue';
 const transactionStore = useTransactionStore();
 const { transactions, loading, error } = storeToRefs(transactionStore);
 
-const showCreateModal = ref(false);
-const showEditModal = ref(false);
+const showCreateDialog = ref(false);
+const showEditDialog = ref(false);
 const editingTransaction = ref<Transaction | null>(null);
 const editTransaction = (transaction: Transaction) => {
   editingTransaction.value = transaction;
-  showEditModal.value = true;
+  showEditDialog.value = true;
 };
 
 const deleteTransaction = async (id: number) => {
@@ -27,9 +27,9 @@ const deleteTransaction = async (id: number) => {
   }
 };
 
-const closeModal = () => {
-  showCreateModal.value = false;
-  showEditModal.value = false;
+const closeDialog = () => {
+  showCreateDialog.value = false;
+  showEditDialog.value = false;
   editingTransaction.value = null;
 };
 
@@ -40,7 +40,7 @@ const handleSave = async (data: CreateTransactionRequest) => {
     } else {
       await transactionStore.createTransaction(data);
     }
-    closeModal();
+    closeDialog();
   } catch (err) {
     alert('取引の保存に失敗しました。');
   }
@@ -55,7 +55,7 @@ onMounted(() => {
   <div class="transactions">
     <div class="page-header">
       <h2>取引管理</h2>
-      <button class="btn btn-primary" @click="showCreateModal = true">新規取引</button>
+      <button class="btn btn-primary" @click="showCreateDialog = true">新規取引</button>
     </div>
 
     <div class="card">
@@ -73,11 +73,11 @@ onMounted(() => {
       </div>
     </div>
 
-    <TransactionModal
-      v-if="showCreateModal || showEditModal"
-      :show="showCreateModal || showEditModal"
+    <TransactionDialog
+      v-if="showCreateDialog || showEditDialog"
+      :show="showCreateDialog || showEditDialog"
       :transaction="editingTransaction"
-      @close="closeModal"
+      @close="closeDialog"
       @save="handleSave"
     />
   </div>
