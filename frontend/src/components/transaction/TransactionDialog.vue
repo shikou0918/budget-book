@@ -97,7 +97,7 @@ onMounted(() => {
       <form @submit.prevent="handleSubmit" class="modal-body">
         <div class="form-group">
           <label class="form-label">種別</label>
-          <select v-model="form.type" class="form-input" required>
+          <select v-model="form.type" class="form-input">
             <option value="">選択してください</option>
             <option value="income">収入</option>
             <option value="expense">支出</option>
@@ -106,7 +106,7 @@ onMounted(() => {
 
         <div class="form-group">
           <label class="form-label">カテゴリ</label>
-          <select v-model="form.category_id" class="form-input" required>
+          <select v-model="form.category_id" class="form-input">
             <option value="">選択してください</option>
             <option v-for="category in filteredCategories" :key="category.id" :value="category.id">
               {{ category.name }}
@@ -116,19 +116,12 @@ onMounted(() => {
 
         <div class="form-group">
           <label class="form-label">金額</label>
-          <input
-            v-model.number="form.amount"
-            type="number"
-            class="form-input"
-            min="0.01"
-            step="0.01"
-            required
-          />
+          <input v-model.number="form.amount" type="number" class="form-input" />
         </div>
 
         <div class="form-group">
           <label class="form-label">日付</label>
-          <input v-model="form.transaction_date" type="date" class="form-input" required />
+          <input v-model="form.transaction_date" type="date" class="form-input" />
         </div>
 
         <div class="form-group">
