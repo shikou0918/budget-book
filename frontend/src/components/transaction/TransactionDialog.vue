@@ -107,7 +107,7 @@ onMounted(() => {
         <div class="form-group">
           <label class="form-label">カテゴリ</label>
           <select v-model="form.category_id" class="form-input">
-            <option value="">選択してください</option>
+            <option :value="0">選択してください</option>
             <option v-for="category in filteredCategories" :key="category.id" :value="category.id">
               {{ category.name }}
             </option>
@@ -116,7 +116,7 @@ onMounted(() => {
 
         <div class="form-group">
           <label class="form-label">金額</label>
-          <input v-model.number="form.amount" type="number" class="form-input" />
+          <input v-model.number="form.amount" type="number" class="form-input" min="0" step="1" />
         </div>
 
         <div class="form-group">
@@ -174,13 +174,14 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 1.5rem 0 1.5rem;
+  padding: 1.5rem;
   border-bottom: 1px solid #eee;
 }
 
 .modal-header h3 {
   margin: 0;
   color: #333;
+  font-size: 1.25rem;
 }
 
 .modal-close {
@@ -205,11 +206,39 @@ onMounted(() => {
   padding: 1.5rem;
 }
 
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  color: #333;
+  background-color: #fff;
+  line-height: 1.5;
+}
+
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
 }
 
 @media (max-width: 768px) {

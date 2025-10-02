@@ -188,6 +188,32 @@ watch(
   align-items: center;
 }
 
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  color: #333;
+  background-color: #fff;
+  line-height: 1.5;
+}
+
 .form-color {
   width: 60px;
   height: 40px;
