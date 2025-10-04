@@ -35,16 +35,16 @@
 
 ```
 .
-├── backend/                 # Go API サーバー
-│   ├── cmd/api/            # アプリケーションエントリーポイント
+├── backend/                 # Go API サーバー (Clean Architecture)
+│   ├── cmd/api/            # アプリケーションエントリーポイント・DI設定
 │   ├── entity/             # エンティティ定義・ドメインロジック
 │   │   └── *_test.go       # エンティティテスト
-│   ├── usecase/            # ビジネスロジック・リポジトリインターフェース
+│   ├── usecase/            # ビジネスロジック + リポジトリインターフェース定義
 │   │   └── *_test.go       # ユースケーステスト（モック使用）
-│   ├── infrastructure/     # データベース・リポジトリ実装
+│   ├── infrastructure/     # リポジトリ実装（usecaseインターフェースに依存）
 │   │   ├── database/       # データベース接続
 │   │   └── repository/     # リポジトリ実装
-│   ├── interface/          # HTTP ハンドラー・ミドルウェア・ユースケースインターフェース
+│   ├── interface/          # HTTP ハンドラー・ミドルウェア
 │   │   ├── handler/        # HTTP ハンドラー
 │   │   │   └── *_test.go   # ハンドラーテスト・統合テスト
 │   │   └── middleware/     # ミドルウェア
@@ -70,12 +70,39 @@
 └── docker-compose.yml      # Docker 設定
 ```
 
+## アーキテクチャ
+
+### Clean Architecture + 依存性逆転の原則
+
+バックエンドは厳格なレイヤー分離とDI（依存性注入）を採用:
+
+```
+entity/              # ドメインエンティティ + ビジネスルール
+  ↑
+usecase/            # ビジネスロジック + リポジトリインターフェース定義
+  ↑
+infrastructure/     # リポジトリ実装（usecaseインターフェースに依存）
+  repository/
+  ↑
+interface/          # HTTPハンドラー（usecaseに依存）
+  handler/
+```
+
+**重要パターン**: リポジトリインターフェースは`usecase/`パッケージで定義され（例: `usecase/transaction.go`の`TransactionRepositoryInterface`）、実装は`infrastructure/repository/`に配置されます。これにより依存性逆転原則を実現しています。
+
+**DI フロー** (`cmd/api/main.go:25-87`参照):
+1. DB接続でリポジトリ実装を作成
+2. リポジトリをユースケースに注入（ユースケースはインターフェースのみ知っている）
+3. ユースケースをハンドラーに注入
+4. ハンドラーをEchoルートに登録
+
 ## セットアップ
 
 ### 前提条件
 - Docker & Docker Compose
 - Go 1.21+ (ローカル開発時)
 - Node.js 20+ & Yarn (ローカル開発時)
+- mockgen (モック生成時)
 
 ### Docker での起動
 
@@ -160,6 +187,23 @@ go test -cover ./...
 # 特定パッケージのテスト実行
 go test ./usecase/
 go test ./interface/handler/
+```
+
+### モック生成（バックエンド）
+
+リポジトリインターフェースを変更した後は、モックを再生成する必要があります:
+
+```bash
+cd backend
+
+# Transaction リポジトリモック再生成
+mockgen -source=usecase/transaction.go -destination=mocks/repository/transaction_mock.go -package=repository
+
+# Category リポジトリモック再生成
+mockgen -source=usecase/category.go -destination=mocks/repository/category_mock.go -package=repository
+
+# Budget リポジトリモック再生成
+mockgen -source=usecase/budget.go -destination=mocks/repository/budget_mock.go -package=repository
 ```
 
 ### フロントエンドテスト
