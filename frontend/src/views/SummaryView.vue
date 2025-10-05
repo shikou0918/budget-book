@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { summaryApi } from '@/services/api';
 import type { MonthlySummary } from '@/types/index';
+import PieChart from '@/components/common/PieChart.vue';
 
 const summary = ref<MonthlySummary | null>(null);
 const loading = ref(false);
@@ -35,6 +36,16 @@ const categoryDetails = computed(() => {
   return Object.values(summary.value.category_summary)
     .filter(detail => detail.total > 0)
     .sort((a, b) => b.total - a.total);
+});
+
+const pieChartData = computed(() => {
+  const expenseCategories = categoryDetails.value.filter(
+    detail => detail.category_type === 'expense'
+  );
+  return {
+    labels: expenseCategories.map(detail => detail.category_name),
+    data: expenseCategories.map(detail => detail.total),
+  };
 });
 
 const formatNumber = (num: number) => {
@@ -107,6 +118,15 @@ onMounted(() => {
               </span>
             </div>
           </div>
+        </div>
+
+        <div class="card" v-if="pieChartData.data.length > 0">
+          <PieChart
+            :labels="pieChartData.labels"
+            :data="pieChartData.data"
+            title="カテゴリ別支出"
+            :height="350"
+          />
         </div>
 
         <div class="card">
@@ -183,12 +203,16 @@ onMounted(() => {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 }
 
 .summary-card {
   grid-column: 1 / -1;
+}
+
+.card:has(.pie-chart-container) {
+  grid-column: 1;
 }
 
 .summary-stats {

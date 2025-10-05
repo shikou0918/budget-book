@@ -5,6 +5,7 @@ import { summaryApi } from '@/services/api';
 import type { MonthlySummary } from '@/types';
 import { storeToRefs } from 'pinia';
 import TransactionTable from '@/components/transaction/TransactionTable.vue';
+import PieChart from '@/components/common/PieChart.vue';
 
 const transactionStore = useTransactionStore();
 const {
@@ -21,6 +22,21 @@ const recentTransactions = computed(() => transactions.value.slice(0, 5));
 const formatNumber = (num: number) => {
   return new Intl.NumberFormat('ja-JP').format(num);
 };
+
+const pieChartData = computed(() => {
+  if (!summary.value?.category_summary) {
+    return { labels: [], data: [] };
+  }
+  const expenseCategories = Object.values(summary.value.category_summary)
+    .filter(detail => detail.category_type === 'expense' && detail.total > 0)
+    .sort((a, b) => b.total - a.total);
+
+  return {
+    labels: expenseCategories.map(detail => detail.category_name),
+    data: expenseCategories.map(detail => detail.total),
+  };
+});
+
 const fetchMonthlySummary = async () => {
   loading.value = true;
   error.value = null;
@@ -70,6 +86,15 @@ onMounted(async () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="card" v-if="pieChartData.data.length > 0">
+        <PieChart
+          :labels="pieChartData.labels"
+          :data="pieChartData.data"
+          title="今月のカテゴリ別支出"
+          :height="300"
+        />
       </div>
 
       <div class="card">
