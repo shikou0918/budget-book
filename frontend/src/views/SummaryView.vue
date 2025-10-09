@@ -78,27 +78,27 @@ onMounted(() => {
 
 <template>
   <div class="summary">
-    <div class="page-header">
-      <h2>サマリー</h2>
-      <div class="month-selector">
-        <select v-model="selectedYear" class="form-input">
-          <option v-for="year in years" :key="year" :value="year">{{ year }}年</option>
-        </select>
-        <select v-model="selectedMonth" class="form-input">
-          <option v-for="month in months" :key="month.value" :value="month.value">
-            {{ month.label }}
-          </option>
-        </select>
-        <button class="btn btn-primary" @click="fetchSummary">表示</button>
-      </div>
-    </div>
+    <h2>サマリー</h2>
 
     <div v-if="loading" class="loading">読み込み中...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else-if="summary" class="summary-content">
       <div class="summary-grid">
         <div class="card summary-card">
-          <h3>{{ selectedYear }}年{{ selectedMonth }}月の収支</h3>
+          <div class="card-header">
+            <h3>{{ selectedYear }}年{{ selectedMonth }}月の収支</h3>
+            <div class="month-selector">
+              <select v-model="selectedYear" class="form-input">
+                <option v-for="year in years" :key="year" :value="year">{{ year }}年</option>
+              </select>
+              <select v-model="selectedMonth" class="form-input">
+                <option v-for="month in months" :key="month.value" :value="month.value">
+                  {{ month.label }}
+                </option>
+              </select>
+              <button class="btn btn-primary" @click="fetchSummary">表示</button>
+            </div>
+          </div>
           <div class="summary-stats">
             <div class="stat">
               <span class="stat-label">収入</span>
@@ -125,7 +125,7 @@ onMounted(() => {
             :labels="pieChartData.labels"
             :data="pieChartData.data"
             title="カテゴリ別支出"
-            :height="350"
+            :height="300"
           />
         </div>
 
@@ -179,16 +179,31 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.summary h2 {
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
   margin-bottom: 2rem;
 }
 
-.page-header h2 {
+.summary-card {
+  grid-column: 1 / -1;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h3 {
   margin: 0;
-  color: #333;
 }
 
 .month-selector {
@@ -199,20 +214,6 @@ onMounted(() => {
 
 .month-selector .form-input {
   width: auto;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-.summary-card {
-  grid-column: 1 / -1;
-}
-
-.card:has(.pie-chart-container) {
-  grid-column: 1;
 }
 
 .summary-stats {
@@ -276,7 +277,11 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .page-header {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
@@ -284,10 +289,6 @@ onMounted(() => {
 
   .month-selector {
     flex-wrap: wrap;
-  }
-
-  .summary-grid {
-    grid-template-columns: 1fr;
   }
 
   .summary-stats {

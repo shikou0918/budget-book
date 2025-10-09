@@ -55,12 +55,16 @@ onMounted(() => {
 
 <template>
   <div class="categories">
-    <div class="page-header">
-      <h2>カテゴリ管理</h2>
-      <button class="btn btn-primary" @click="showCreateDialog = true">新規カテゴリ</button>
-    </div>
+    <h2>カテゴリ管理</h2>
 
     <div class="category-grid">
+      <div class="card header-card">
+        <div class="card-header">
+          <h3>カテゴリ一覧</h3>
+          <button class="btn btn-primary" @click="showCreateDialog = true">新規カテゴリ</button>
+        </div>
+      </div>
+
       <div class="card">
         <h3>収入カテゴリ</h3>
         <div v-if="loading" class="loading">読み込み中...</div>
@@ -112,15 +116,8 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.categories h2 {
   margin-bottom: 2rem;
-}
-
-.page-header h2 {
-  margin: 0;
   color: #333;
 }
 
@@ -128,6 +125,22 @@ onMounted(() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.header-card {
+  grid-column: 1 / -1;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.card-header h3 {
+  margin: 0;
 }
 
 .category-list {
@@ -178,7 +191,7 @@ onMounted(() => {
     grid-template-columns: 1fr;
   }
 
-  .page-header {
+  .card-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;

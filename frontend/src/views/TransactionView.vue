@@ -53,23 +53,26 @@ onMounted(() => {
 
 <template>
   <div class="transactions">
-    <div class="page-header">
-      <h2>取引管理</h2>
-      <button class="btn btn-primary" @click="showCreateDialog = true">新規取引</button>
-    </div>
+    <h2>取引管理</h2>
 
-    <div class="card">
-      <div v-if="loading" class="loading">読み込み中...</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else-if="transactions.length === 0">取引がありません</div>
-      <div v-else>
-        <TransactionTable
-          :transactions="transactions"
-          :loading="loading"
-          :items-per-page="10"
-          @edit="editTransaction"
-          @delete="deleteTransaction"
-        />
+    <div class="transactions-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>取引一覧</h3>
+          <button class="btn btn-primary" @click="showCreateDialog = true">新規取引</button>
+        </div>
+        <div v-if="loading" class="loading">読み込み中...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+        <div v-else-if="transactions.length === 0">取引がありません</div>
+        <div v-else>
+          <TransactionTable
+            :transactions="transactions"
+            :loading="loading"
+            :items-per-page="10"
+            @edit="editTransaction"
+            @delete="deleteTransaction"
+          />
+        </div>
       </div>
     </div>
 
@@ -89,20 +92,39 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.transactions h2 {
   margin-bottom: 2rem;
-}
-
-.page-header h2 {
-  margin: 0;
   color: #333;
 }
 
+.transactions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.transactions-grid .card {
+  grid-column: 1 / -1;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h3 {
+  margin: 0;
+}
+
 @media (max-width: 768px) {
-  .page-header {
+  .transactions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
