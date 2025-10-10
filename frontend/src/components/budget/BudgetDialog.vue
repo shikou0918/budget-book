@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { useCategoryStore } from '@/stores/category';
+import BaseDialog from '@/components/common/BaseDialog.vue';
 import type { Budget, CreateBudgetRequest } from '@/types';
 
 interface Props {
@@ -41,6 +42,8 @@ const months = [
 
 const expenseCategories = computed(() => categories.filter(c => c.type === 'expense'));
 
+const dialogTitle = computed(() => (props.budget ? '予算編集' : '新規予算'));
+
 const isFormValid = computed(() => {
   return (
     form.value.category_id > 0 &&
@@ -51,12 +54,6 @@ const isFormValid = computed(() => {
     form.value.target_month <= 12
   );
 });
-
-const handleOverlayClick = (e: Event) => {
-  if (e.target === e.currentTarget) {
-    emit('close');
-  }
-};
 
 const handleSubmit = () => {
   if (isFormValid.value) {
@@ -92,136 +89,65 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="show" class="modal-overlay" @click="handleOverlayClick">
-    <div class="modal" @click.stop>
-      <div class="modal-header">
-        <h3>{{ budget ? '予算編集' : '新規予算' }}</h3>
-        <button class="modal-close" @click="$emit('close')">&times;</button>
+  <BaseDialog :show="show" :title="dialogTitle" @close="emit('close')">
+    <form @submit.prevent="handleSubmit">
+      <div class="form-group">
+        <label class="form-label">カテゴリ</label>
+        <select v-model="form.category_id" class="form-input" required>
+          <option value="">選択してください</option>
+          <option v-for="category in expenseCategories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
+        </select>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="modal-body">
-        <div class="form-group">
-          <label class="form-label">カテゴリ</label>
-          <select v-model="form.category_id" class="form-input" required>
-            <option value="">選択してください</option>
-            <option v-for="category in expenseCategories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label class="form-label">予算額</label>
+        <input
+          v-model.number="form.amount"
+          type="number"
+          class="form-input"
+          min="0.01"
+          step="0.01"
+          required
+        />
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">予算額</label>
-          <input
-            v-model.number="form.amount"
-            type="number"
-            class="form-input"
-            min="0.01"
-            step="0.01"
-            required
-          />
-        </div>
+      <div class="form-group">
+        <label class="form-label">対象年</label>
+        <input
+          v-model.number="form.target_year"
+          type="number"
+          class="form-input"
+          min="1900"
+          max="2100"
+          required
+        />
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">対象年</label>
-          <input
-            v-model.number="form.target_year"
-            type="number"
-            class="form-input"
-            min="1900"
-            max="2100"
-            required
-          />
-        </div>
+      <div class="form-group">
+        <label class="form-label">対象月</label>
+        <select v-model="form.target_month" class="form-input" required>
+          <option value="">選択してください</option>
+          <option v-for="month in months" :key="month.value" :value="month.value">
+            {{ month.label }}
+          </option>
+        </select>
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">対象月</label>
-          <select v-model="form.target_month" class="form-input" required>
-            <option value="">選択してください</option>
-            <option v-for="month in months" :key="month.value" :value="month.value">
-              {{ month.label }}
-            </option>
-          </select>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="$emit('close')">
-            キャンセル
-          </button>
-          <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
-            {{ budget ? '更新' : '作成' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @click="emit('close')">
+          キャンセル
+        </button>
+        <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
+          {{ budget ? '更新' : '作成' }}
+        </button>
+      </div>
+    </form>
+  </BaseDialog>
 </template>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: #333;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #999;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-close:hover {
-  color: #333;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -248,15 +174,10 @@ onMounted(() => {
   line-height: 1.5;
 }
 
-@media (max-width: 768px) {
-  .modal {
-    width: 95%;
-    margin: 1rem;
-  }
-
-  .modal-header,
-  .modal-body {
-    padding: 1rem;
-  }
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 </style>

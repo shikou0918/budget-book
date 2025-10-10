@@ -18,6 +18,7 @@ const summary = ref<MonthlySummary | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const recentTransactions = computed(() => transactions.value.slice(0, 5));
+const chartType = ref<'income' | 'expense'>('expense');
 
 const formatNumber = (num: number) => {
   return new Intl.NumberFormat('ja-JP').format(num);
@@ -27,13 +28,13 @@ const pieChartData = computed(() => {
   if (!summary.value?.category_summary) {
     return { labels: [], data: [] };
   }
-  const expenseCategories = Object.values(summary.value.category_summary)
-    .filter(detail => detail.category_type === 'expense' && detail.total > 0)
+  const categories = Object.values(summary.value.category_summary)
+    .filter(detail => detail.category_type === chartType.value && detail.total > 0)
     .sort((a, b) => b.total - a.total);
 
   return {
-    labels: expenseCategories.map(detail => detail.category_name),
-    data: expenseCategories.map(detail => detail.total),
+    labels: categories.map(detail => detail.category_name),
+    data: categories.map(detail => detail.total),
   };
 });
 
@@ -89,11 +90,30 @@ onMounted(async () => {
       </div>
 
       <div class="card" v-if="pieChartData.data.length > 0">
+        <div class="chart-header">
+          <h3>今月のカテゴリ別{{ chartType === 'expense' ? '支出' : '収入' }}</h3>
+          <div class="chart-type-selector">
+            <button
+              class="btn"
+              :class="{ 'btn-primary': chartType === 'expense', 'btn-secondary': chartType !== 'expense' }"
+              @click="chartType = 'expense'"
+            >
+              支出
+            </button>
+            <button
+              class="btn"
+              :class="{ 'btn-primary': chartType === 'income', 'btn-secondary': chartType !== 'income' }"
+              @click="chartType = 'income'"
+            >
+              収入
+            </button>
+          </div>
+        </div>
         <PieChart
           :labels="pieChartData.labels"
           :data="pieChartData.data"
-          title="今月のカテゴリ別支出"
-          :height="300"
+          :title="''"
+          :height="250"
         />
       </div>
 
@@ -171,6 +191,27 @@ onMounted(async () => {
   color: #dc3545;
 }
 
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chart-header h3 {
+  margin: 0;
+}
+
+.chart-type-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chart-type-selector .btn {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+}
+
 @media (max-width: 768px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -179,6 +220,12 @@ onMounted(async () => {
   .summary-stats {
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
   }
 }
 </style>

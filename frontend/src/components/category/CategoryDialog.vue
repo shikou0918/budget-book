@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { COLOR_PRESETS, DEFAULT_COLOR } from '@/config/colors';
+import BaseDialog from '@/components/common/BaseDialog.vue';
 import type { Category, CreateCategoryRequest } from '@/types';
 
 interface Props {
@@ -20,15 +21,11 @@ const form = ref<CreateCategoryRequest>({
   color: DEFAULT_COLOR,
 });
 
+const dialogTitle = computed(() => (props.category ? 'カテゴリ編集' : '新規カテゴリ'));
+
 const isFormValid = computed(() => {
   return form.value.name.trim() && form.value.type && form.value.color;
 });
-
-const handleOverlayClick = (e: Event) => {
-  if (e.target === e.currentTarget) {
-    emit('close');
-  }
-};
 
 const handleSubmit = () => {
   if (isFormValid.value) {
@@ -58,136 +55,66 @@ watch(
 </script>
 
 <template>
-  <div v-if="show" class="modal-overlay" @click="handleOverlayClick">
-    <div class="modal" @click.stop>
-      <div class="modal-header">
-        <h3>{{ category ? 'カテゴリ編集' : '新規カテゴリ' }}</h3>
-        <button class="modal-close" @click="$emit('close')">&times;</button>
+  <BaseDialog :show="show" :title="dialogTitle" @close="emit('close')">
+    <form @submit.prevent="handleSubmit">
+      <div class="form-group">
+        <label class="form-label">カテゴリ名</label>
+        <input
+          v-model="form.name"
+          type="text"
+          class="form-input"
+          maxlength="50"
+          required
+          placeholder="カテゴリ名を入力"
+        />
       </div>
 
-      <form @submit.prevent="handleSubmit" class="modal-body">
-        <div class="form-group">
-          <label class="form-label">カテゴリ名</label>
+      <div class="form-group">
+        <label class="form-label">種別</label>
+        <select v-model="form.type" class="form-input" required>
+          <option value="">選択してください</option>
+          <option value="income">収入</option>
+          <option value="expense">支出</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">色</label>
+        <div class="color-input-group">
+          <input v-model="form.color" type="color" class="form-color" />
           <input
-            v-model="form.name"
+            v-model="form.color"
             type="text"
-            class="form-input"
-            maxlength="50"
-            required
-            placeholder="カテゴリ名を入力"
+            class="form-input color-text"
+            pattern="#[0-9A-Fa-f]{6}"
+            placeholder="#007BFF"
           />
         </div>
-
-        <div class="form-group">
-          <label class="form-label">種別</label>
-          <select v-model="form.type" class="form-input" required>
-            <option value="">選択してください</option>
-            <option value="income">収入</option>
-            <option value="expense">支出</option>
-          </select>
+        <div class="color-presets">
+          <button
+            v-for="color in COLOR_PRESETS"
+            :key="color"
+            type="button"
+            class="color-preset"
+            :style="{ backgroundColor: color }"
+            @click="form.color = color"
+          ></button>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">色</label>
-          <div class="color-input-group">
-            <input v-model="form.color" type="color" class="form-color" />
-            <input
-              v-model="form.color"
-              type="text"
-              class="form-input color-text"
-              pattern="#[0-9A-Fa-f]{6}"
-              placeholder="#007BFF"
-            />
-          </div>
-          <div class="color-presets">
-            <button
-              v-for="color in COLOR_PRESETS"
-              :key="color"
-              type="button"
-              class="color-preset"
-              :style="{ backgroundColor: color }"
-              @click="form.color = color"
-            ></button>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="$emit('close')">
-            キャンセル
-          </button>
-          <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
-            {{ category ? '更新' : '作成' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @click="emit('close')">
+          キャンセル
+        </button>
+        <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
+          {{ category ? '更新' : '作成' }}
+        </button>
+      </div>
+    </form>
+  </BaseDialog>
 </template>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 1.5rem 0 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: #333;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #999;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-close:hover {
-  color: #333;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-
-.color-input-group {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -212,6 +139,12 @@ watch(
   color: #333;
   background-color: #fff;
   line-height: 1.5;
+}
+
+.color-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .form-color {
@@ -255,16 +188,6 @@ watch(
 }
 
 @media (max-width: 768px) {
-  .modal {
-    width: 95%;
-    margin: 1rem;
-  }
-
-  .modal-header,
-  .modal-body {
-    padding: 1rem;
-  }
-
   .color-presets {
     justify-content: center;
   }

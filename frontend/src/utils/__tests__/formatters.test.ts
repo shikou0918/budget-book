@@ -30,9 +30,6 @@ describe('フォーマッター関数', () => {
 
     test('日時文字列を処理する', () => {
       expect(formatDate('2024-01-15T10:30:00Z')).toBe('2024/1/15');
-      // TODO(human): Fix the timezone issue for this test
-      // The datetime string '2024-12-25T23:59:59Z' might be converted to the next day
-      // due to timezone differences. Update this test to handle timezone properly
       expect(formatDate('2024-12-25T12:00:00Z')).toBe('2024/12/25');
     });
   });

@@ -10,6 +10,7 @@ const error = ref<string | null>(null);
 
 const selectedYear = ref(new Date().getFullYear());
 const selectedMonth = ref(new Date().getMonth() + 1);
+const chartType = ref<'income' | 'expense'>('expense');
 
 const years = computed(() => {
   const currentYear = new Date().getFullYear();
@@ -39,12 +40,12 @@ const categoryDetails = computed(() => {
 });
 
 const pieChartData = computed(() => {
-  const expenseCategories = categoryDetails.value.filter(
-    detail => detail.category_type === 'expense'
+  const categories = categoryDetails.value.filter(
+    detail => detail.category_type === chartType.value
   );
   return {
-    labels: expenseCategories.map(detail => detail.category_name),
-    data: expenseCategories.map(detail => detail.total),
+    labels: categories.map(detail => detail.category_name),
+    data: categories.map(detail => detail.total),
   };
 });
 
@@ -121,11 +122,30 @@ onMounted(() => {
         </div>
 
         <div class="card" v-if="pieChartData.data.length > 0">
+          <div class="chart-header">
+            <h3>カテゴリ別{{ chartType === 'expense' ? '支出' : '収入' }}</h3>
+            <div class="chart-type-selector">
+              <button
+                class="btn"
+                :class="{ 'btn-primary': chartType === 'expense', 'btn-secondary': chartType !== 'expense' }"
+                @click="chartType = 'expense'"
+              >
+                支出
+              </button>
+              <button
+                class="btn"
+                :class="{ 'btn-primary': chartType === 'income', 'btn-secondary': chartType !== 'income' }"
+                @click="chartType = 'income'"
+              >
+                収入
+              </button>
+            </div>
+          </div>
           <PieChart
             :labels="pieChartData.labels"
             :data="pieChartData.data"
-            title="カテゴリ別支出"
-            :height="300"
+            :title="''"
+            :height="250"
           />
         </div>
 
@@ -276,6 +296,27 @@ onMounted(() => {
   color: #666;
 }
 
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chart-header h3 {
+  margin: 0;
+}
+
+.chart-type-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chart-type-selector .btn {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+}
+
 @media (max-width: 768px) {
   .summary-grid {
     grid-template-columns: 1fr;
@@ -294,6 +335,12 @@ onMounted(() => {
   .summary-stats {
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
   }
 }
 </style>
