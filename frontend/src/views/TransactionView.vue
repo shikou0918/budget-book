@@ -88,8 +88,6 @@ onMounted(() => {
 
 <style scoped>
 .transactions {
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .transactions h2 {

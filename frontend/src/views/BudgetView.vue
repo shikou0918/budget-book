@@ -123,11 +123,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.budgets {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .budgets h2 {
   margin-bottom: 2rem;
   color: #333;

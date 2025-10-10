@@ -28,6 +28,7 @@ import { RouterLink, RouterView } from 'vue-router';
 #app {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
+  width: 100%;
   background-color: #f5f5f5;
 }
 
@@ -44,8 +45,6 @@ import { RouterLink, RouterView } from 'vue-router';
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .nav-brand h1 {
@@ -78,8 +77,7 @@ import { RouterLink, RouterView } from 'vue-router';
 }
 
 .main {
-  max-width: 1200px;
-  margin: 2rem auto;
+  margin: 2rem 0;
   padding: 0 2rem;
 }
 

@@ -194,11 +194,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.summary {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .summary h2 {
   margin-bottom: 2rem;
   color: #333;

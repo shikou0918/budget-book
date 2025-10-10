@@ -111,11 +111,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.categories {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .categories h2 {
   margin-bottom: 2rem;
   color: #333;

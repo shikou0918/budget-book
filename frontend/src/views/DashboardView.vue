@@ -131,11 +131,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .dashboard h2 {
   margin-bottom: 2rem;
   color: #333;
