@@ -103,9 +103,7 @@ watch(
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click="emit('close')">
-          キャンセル
-        </button>
+        <button type="button" class="btn btn-secondary" @click="emit('close')">キャンセル</button>
         <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
           {{ category ? '更新' : '作成' }}
         </button>

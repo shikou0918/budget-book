@@ -127,14 +127,20 @@ onMounted(() => {
             <div class="chart-type-selector">
               <button
                 class="btn"
-                :class="{ 'btn-primary': chartType === 'expense', 'btn-secondary': chartType !== 'expense' }"
+                :class="{
+                  'btn-primary': chartType === 'expense',
+                  'btn-secondary': chartType !== 'expense',
+                }"
                 @click="chartType = 'expense'"
               >
                 支出
               </button>
               <button
                 class="btn"
-                :class="{ 'btn-primary': chartType === 'income', 'btn-secondary': chartType !== 'income' }"
+                :class="{
+                  'btn-primary': chartType === 'income',
+                  'btn-secondary': chartType !== 'income',
+                }"
                 @click="chartType = 'income'"
               >
                 収入
