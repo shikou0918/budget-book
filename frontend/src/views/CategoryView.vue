@@ -227,10 +227,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style scoped>
-/* Vuetifyのユーティリティクラスとコンポーネントスタイルを使用 */
-.gap-2 {
-  gap: 8px;
-}
-</style>

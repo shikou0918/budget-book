@@ -82,7 +82,3 @@ const notification = useNotification();
     </v-snackbar>
   </v-app>
 </template>
-
-<style>
-/* グローバルスタイルは最小限に - Vuetifyが大部分を処理 */
-</style>

@@ -121,7 +121,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style scoped>
-/* Vuetifyのユーティリティクラスを使用するため、カスタムCSSは不要 */
-</style>
