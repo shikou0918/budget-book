@@ -93,16 +93,4 @@ const handleOverlayClick = (e: Event) => {
 .modal-body {
   padding: 1.5rem;
 }
-
-@media (max-width: 768px) {
-  .modal {
-    width: 95%;
-    margin: 1rem;
-  }
-
-  .modal-header,
-  .modal-body {
-    padding: 1rem;
-  }
-}
 </style>

@@ -184,10 +184,4 @@ watch(
   gap: 1rem;
   margin-top: 1.5rem;
 }
-
-@media (max-width: 768px) {
-  .color-presets {
-    justify-content: center;
-  }
-}
 </style>

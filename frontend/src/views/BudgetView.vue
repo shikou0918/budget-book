@@ -164,16 +164,4 @@ onMounted(() => {
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
 }
-
-@media (max-width: 768px) {
-  .budgets-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-}
 </style>

@@ -320,31 +320,4 @@ onMounted(() => {
   font-size: 0.875rem;
   padding: 0.5rem 1rem;
 }
-
-@media (max-width: 768px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-
-  .month-selector {
-    flex-wrap: wrap;
-  }
-
-  .summary-stats {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .chart-header {
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: stretch;
-  }
-}
 </style>
