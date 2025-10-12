@@ -84,36 +84,19 @@ onMounted(() => {
         <v-card elevation="2">
           <v-card-title class="d-flex justify-space-between align-center">
             <span class="text-h6">取引一覧</span>
-            <v-btn
-              color="primary"
-              prepend-icon="mdi-plus"
-              @click="showCreateDialog = true"
-            >
+            <v-btn color="primary" prepend-icon="mdi-plus" @click="showCreateDialog = true">
               新規取引
             </v-btn>
           </v-card-title>
 
           <v-card-text>
-            <v-progress-linear
-              v-if="loading"
-              indeterminate
-              color="primary"
-            ></v-progress-linear>
+            <v-progress-linear v-if="loading" indeterminate color="primary"></v-progress-linear>
 
-            <v-alert
-              v-else-if="error"
-              type="error"
-              variant="tonal"
-              class="mb-4"
-            >
+            <v-alert v-else-if="error" type="error" variant="tonal" class="mb-4">
               {{ error }}
             </v-alert>
 
-            <v-alert
-              v-else-if="transactions.length === 0"
-              type="info"
-              variant="tonal"
-            >
+            <v-alert v-else-if="transactions.length === 0" type="info" variant="tonal">
               取引がありません
             </v-alert>
 

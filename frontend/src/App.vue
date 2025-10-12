@@ -21,24 +21,15 @@ const notification = useNotification();
   <v-app>
     <!-- App Bar -->
     <v-app-bar color="primary" prominent>
-      <v-app-bar-nav-icon
-        variant="text"
-        @click.stop="drawer = !drawer"
-      ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title class="text-h5 font-weight-bold">
-        Budget Book
-      </v-toolbar-title>
+      <v-toolbar-title class="text-h5 font-weight-bold"> Budget Book </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <!-- Desktop Navigation -->
       <template v-for="item in navItems" :key="item.to">
-        <v-btn
-          :to="item.to"
-          variant="text"
-          class="d-none d-md-flex"
-        >
+        <v-btn :to="item.to" variant="text" class="d-none d-md-flex">
           <v-icon start>{{ item.icon }}</v-icon>
           {{ item.title }}
         </v-btn>
@@ -46,10 +37,7 @@ const notification = useNotification();
     </v-app-bar>
 
     <!-- Mobile Navigation Drawer -->
-    <v-navigation-drawer
-      v-model="drawer"
-      temporary
-    >
+    <v-navigation-drawer v-model="drawer" temporary>
       <v-list>
         <v-list-item
           prepend-icon="mdi-wallet"
@@ -89,12 +77,7 @@ const notification = useNotification();
       {{ notification.message.value }}
 
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="notification.show.value = false"
-        >
-          閉じる
-        </v-btn>
+        <v-btn variant="text" @click="notification.show.value = false"> 閉じる </v-btn>
       </template>
     </v-snackbar>
   </v-app>

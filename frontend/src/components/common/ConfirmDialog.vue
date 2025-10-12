@@ -29,12 +29,12 @@ const dialog = ref(props.modelValue);
 
 watch(
   () => props.modelValue,
-  (newVal) => {
+  newVal => {
     dialog.value = newVal;
   }
 );
 
-watch(dialog, (newVal) => {
+watch(dialog, newVal => {
   emit('update:modelValue', newVal);
 });
 

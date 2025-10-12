@@ -98,25 +98,13 @@ onMounted(() => {
           </v-card-title>
 
           <v-card-text>
-            <v-progress-linear
-              v-if="loading"
-              indeterminate
-              color="success"
-            ></v-progress-linear>
+            <v-progress-linear v-if="loading" indeterminate color="success"></v-progress-linear>
 
-            <v-alert
-              v-else-if="error"
-              type="error"
-              variant="tonal"
-            >
+            <v-alert v-else-if="error" type="error" variant="tonal">
               {{ error }}
             </v-alert>
 
-            <v-alert
-              v-else-if="incomeCategories.length === 0"
-              type="info"
-              variant="tonal"
-            >
+            <v-alert v-else-if="incomeCategories.length === 0" type="info" variant="tonal">
               収入カテゴリがありません
             </v-alert>
 
@@ -169,25 +157,13 @@ onMounted(() => {
           </v-card-title>
 
           <v-card-text>
-            <v-progress-linear
-              v-if="loading"
-              indeterminate
-              color="error"
-            ></v-progress-linear>
+            <v-progress-linear v-if="loading" indeterminate color="error"></v-progress-linear>
 
-            <v-alert
-              v-else-if="error"
-              type="error"
-              variant="tonal"
-            >
+            <v-alert v-else-if="error" type="error" variant="tonal">
               {{ error }}
             </v-alert>
 
-            <v-alert
-              v-else-if="expenseCategories.length === 0"
-              type="info"
-              variant="tonal"
-            >
+            <v-alert v-else-if="expenseCategories.length === 0" type="info" variant="tonal">
               支出カテゴリがありません
             </v-alert>
 
