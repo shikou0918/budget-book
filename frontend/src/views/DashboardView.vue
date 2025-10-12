@@ -61,8 +61,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="dashboard">
-    <h2>ダッシュボード</h2>
+  <div>
+    <h2 class="mb-2">ダッシュボード</h2>
 
     <div class="dashboard-grid">
       <div class="card summary-card">
@@ -92,31 +92,15 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="card" v-if="pieChartData.data.length > 0">
+      <v-card v-if="pieChartData.data.length > 0">
         <div class="chart-header">
-          <h3>今月のカテゴリ別{{ chartType === 'expense' ? '支出' : '収入' }}</h3>
-          <div class="chart-type-selector">
-            <button
-              class="btn"
-              :class="{
-                'btn-primary': chartType === 'expense',
-                'btn-secondary': chartType !== 'expense',
-              }"
-              @click="chartType = 'expense'"
-            >
-              支出
-            </button>
-            <button
-              class="btn"
-              :class="{
-                'btn-primary': chartType === 'income',
-                'btn-secondary': chartType !== 'income',
-              }"
-              @click="chartType = 'income'"
-            >
-              収入
-            </button>
-          </div>
+          <v-card-title
+            >今月のカテゴリ別{{ chartType === 'expense' ? '支出' : '収入' }}</v-card-title
+          >
+          <v-card-actions>
+            <v-btn @click="chartType = 'expense'">支出</v-btn>
+            <v-btn @click="chartType = 'income'">収入</v-btn>
+          </v-card-actions>
         </div>
         <PieChart
           :labels="pieChartData.labels"
@@ -124,27 +108,21 @@ onMounted(async () => {
           :title="''"
           :height="250"
         />
-      </div>
-
-      <div class="card">
-        <h3>最近の取引</h3>
-        <div v-if="transactionLoading" class="loading">読み込み中...</div>
-        <div v-else-if="transactionError" class="error">{{ transactionError }}</div>
-        <div v-else-if="recentTransactions.length === 0">取引がありません</div>
-        <div v-else>
+      </v-card>
+      <v-card>
+        <v-card-title>最近の取引</v-card-title>
+        <v-card-text v-if="transactionLoading" class="loading">読み込み中...</v-card-text>
+        <v-card-text v-else-if="transactionError" class="error">{{ transactionError }}</v-card-text>
+        <v-card-text v-else-if="recentTransactions.length === 0">取引がありません</v-card-text>
+        <v-card-text v-else>
           <TransactionTable :transactions="transactions" :loading="loading" :items-per-page="10" />
-        </div>
-      </div>
+        </v-card-text>
+      </v-card>
     </div>
   </div>
 </template>
 
 <style scoped>
-.dashboard h2 {
-  margin-bottom: 2rem;
-  color: #333;
-}
-
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

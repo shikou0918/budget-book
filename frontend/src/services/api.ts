@@ -47,11 +47,7 @@ const handleApiError = (error: unknown): never => {
       timestamp: new Date().toISOString(),
     });
 
-    throw new AppError(
-      message || 'ネットワークエラーが発生しました',
-      statusCode,
-      axiosError,
-    );
+    throw new AppError(message || 'ネットワークエラーが発生しました', statusCode, axiosError);
   }
 
   // Unknown error
@@ -90,7 +86,7 @@ api.interceptors.response.use(
 
     await wait(delayMs);
     return api(config);
-  },
+  }
 );
 
 // Input validation utilities

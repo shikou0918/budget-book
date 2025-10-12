@@ -81,7 +81,7 @@ export class ApplicationError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public originalError?: unknown,
+    public originalError?: unknown
   ) {
     super(message);
     this.name = 'ApplicationError';
