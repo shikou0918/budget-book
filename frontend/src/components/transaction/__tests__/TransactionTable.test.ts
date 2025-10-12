@@ -61,14 +61,14 @@ describe('TransactionTable', () => {
   test('loading propがtrueの時にローディング状態を表示する', () => {
     const wrapper = mount(TransactionTable, {
       props: {
-        transactions: [],
+        transactions: mockTransactions,
         loading: true,
       },
     });
 
-    // v-data-tableのローディング状態をチェック
-    const dataTable = wrapper.findComponent({ name: 'VDataTable' });
-    expect(dataTable.props('loading')).toBe(true);
+    // v-progress-linearが表示されるかチェック
+    const progressLinear = wrapper.findComponent({ name: 'VProgressLinear' });
+    expect(progressLinear.exists()).toBe(true);
   });
 
   test('showActionsがtrueの時にアクションボタンを表示する', () => {

@@ -16,7 +16,7 @@ interface Props {
   /** 高さ */
   height?: string | number;
   /** エラー */
-  error: string | null;
+  error?: string | null;
 }
 
 interface Emits {
