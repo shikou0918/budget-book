@@ -6,14 +6,27 @@
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
+html {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* Improve text rendering */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.v-application {
+  overflow-y: auto !important;
+}
+
+.v-main {
+  overflow-y: visible !important;
 }
