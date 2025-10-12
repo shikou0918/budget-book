@@ -3,12 +3,20 @@ import { computed, ref } from 'vue';
 import type { Transaction } from '@/types';
 
 interface Props {
+  /** 取引 */
   transactions: Transaction[];
+  /** ローディング中 */
   loading?: boolean;
+  /** 検索表示 */
   showSearch?: boolean;
+  /** 操作表示 */
   showActions?: boolean;
+  /** ページ */
   itemsPerPage?: number;
+  /** 高さ */
   height?: string | number;
+  /** エラー */
+  error: string | null;
 }
 
 interface Emits {
@@ -63,7 +71,15 @@ const handleDelete = (id: number) => {
 
 <template>
   <div class="transaction-table">
+    <v-progress-linear v-if="loading" indeterminate color="primary" />
+    <v-alert v-else-if="error" type="error" variant="tonal" class="mb-4">
+      {{ error }}
+    </v-alert>
+    <v-alert v-else-if="transactions.length === 0" type="info" variant="tonal">
+      取引がありません
+    </v-alert>
     <v-data-table
+      v-if="transactions.length > 0"
       :headers="headers"
       :items="transactions"
       :search="props.showSearch ? search : undefined"

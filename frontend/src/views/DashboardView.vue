@@ -17,7 +17,6 @@ const {
 const summary = ref<MonthlySummary | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const recentTransactions = computed(() => transactions.value.slice(0, 5));
 const chartType = ref<'income' | 'expense'>('expense');
 
 const formatNumber = (num: number) => {
@@ -111,19 +110,13 @@ onMounted(async () => {
       </v-card>
       <v-card>
         <v-card-title>最近の取引</v-card-title>
-        <v-progress-linear
-          v-if="transactionLoading"
-          indeterminate
-          color="primary"
-        ></v-progress-linear>
-        <v-alert v-else-if="error" type="error" variant="tonal" class="mb-4">{{
-          transactionError
-        }}</v-alert>
-        <v-alert v-else-if="recentTransactions.length === 0" type="info" variant="tonal"
-          >取引がありません</v-alert
-        >
-        <v-card-text v-else>
-          <TransactionTable :transactions="transactions" :loading="loading" :items-per-page="10" />
+        <v-card-text>
+          <TransactionTable
+            :transactions="transactions"
+            :loading="transactionLoading"
+            :items-per-page="10"
+            :error="transactionError"
+          />
         </v-card-text>
       </v-card>
     </div>
