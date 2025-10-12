@@ -91,15 +91,12 @@ onMounted(() => {
 
           <v-card-text>
             <v-progress-linear v-if="loading" indeterminate color="primary"></v-progress-linear>
-
             <v-alert v-else-if="error" type="error" variant="tonal" class="mb-4">
               {{ error }}
             </v-alert>
-
             <v-alert v-else-if="transactions.length === 0" type="info" variant="tonal">
               取引がありません
             </v-alert>
-
             <TransactionTable
               v-else
               :transactions="transactions"
