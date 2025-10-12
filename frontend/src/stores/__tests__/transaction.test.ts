@@ -85,8 +85,7 @@ describe('取引ストア', () => {
       await store.fetchTransactions();
 
       expect(store.loading).toBe(false);
-      // TODO(human): Fix this test to match the new error message format
-      expect(store.error).toBe('Failed to fetch transactions');
+      expect(store.error).toBe('取引データの取得に失敗しました: Network error');
       expect(store.transactions).toEqual([]);
     });
 
@@ -143,7 +142,7 @@ describe('取引ストア', () => {
       await expect(store.createTransaction(mockCreateRequest)).rejects.toThrow();
       expect(store.loading).toBe(false);
       // TODO(human): Fix this test to match the new error message format
-      expect(store.error).toBe('Failed to create transaction');
+      expect(store.error).toBe('取引の作成に失敗しました: Create failed');
       expect(store.transactions).toEqual([]);
     });
 
@@ -199,9 +198,8 @@ describe('取引ストア', () => {
 
       await expect(store.updateTransaction(1, mockCreateRequest)).rejects.toThrow();
       expect(store.loading).toBe(false);
-      // TODO(human): Fix this test to match the new error message format
-      expect(store.error).toBe('Failed to update transaction');
-      expect(store.transactions).toEqual([mockTransaction]); // unchanged
+      expect(store.error).toBe('取引の更新に失敗しました: Update failed');
+      expect(store.transactions).toEqual([mockTransaction]);
     });
 
     test('取引が見つからない場合は更新しない', async () => {
@@ -216,10 +214,8 @@ describe('取引ストア', () => {
 
       const store = useTransactionStore();
       store.transactions = [mockTransaction];
-
       await store.updateTransaction(999, mockCreateRequest);
-
-      expect(store.transactions).toEqual([mockTransaction]); // unchanged
+      expect(store.transactions).toEqual([mockTransaction]);
     });
   });
 
@@ -253,9 +249,8 @@ describe('取引ストア', () => {
       await expect(store.deleteTransaction(1)).rejects.toThrow();
 
       expect(store.loading).toBe(false);
-      // TODO(human): Fix this test to match the new error message format
-      expect(store.error).toBe('Failed to delete transaction');
-      expect(store.transactions).toEqual([mockTransaction]); // unchanged
+      expect(store.error).toBe('取引の削除に失敗しました: Delete failed');
+      expect(store.transactions).toEqual([mockTransaction]);
     });
 
     test('指定された取引のみを削除する', async () => {
