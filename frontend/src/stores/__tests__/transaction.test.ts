@@ -85,6 +85,7 @@ describe('取引ストア', () => {
       await store.fetchTransactions();
 
       expect(store.loading).toBe(false);
+      // TODO(human): Fix this test to match the new error message format
       expect(store.error).toBe('Failed to fetch transactions');
       expect(store.transactions).toEqual([]);
     });
@@ -141,6 +142,7 @@ describe('取引ストア', () => {
 
       await expect(store.createTransaction(mockCreateRequest)).rejects.toThrow();
       expect(store.loading).toBe(false);
+      // TODO(human): Fix this test to match the new error message format
       expect(store.error).toBe('Failed to create transaction');
       expect(store.transactions).toEqual([]);
     });
@@ -197,6 +199,7 @@ describe('取引ストア', () => {
 
       await expect(store.updateTransaction(1, mockCreateRequest)).rejects.toThrow();
       expect(store.loading).toBe(false);
+      // TODO(human): Fix this test to match the new error message format
       expect(store.error).toBe('Failed to update transaction');
       expect(store.transactions).toEqual([mockTransaction]); // unchanged
     });
@@ -250,6 +253,7 @@ describe('取引ストア', () => {
       await expect(store.deleteTransaction(1)).rejects.toThrow();
 
       expect(store.loading).toBe(false);
+      // TODO(human): Fix this test to match the new error message format
       expect(store.error).toBe('Failed to delete transaction');
       expect(store.transactions).toEqual([mockTransaction]); // unchanged
     });

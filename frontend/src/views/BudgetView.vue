@@ -20,6 +20,9 @@ const fetchBudgets = async () => {
   error.value = null;
   try {
     const response = await budgetApi.getAll();
+    if (!response) {
+      throw new Error('予算データの取得に失敗しました');
+    }
     budgets.value = response.data;
   } catch (err) {
     error.value = '予算の取得に失敗しました';
@@ -54,12 +57,18 @@ const handleSave = async (data: CreateBudgetRequest) => {
   try {
     if (editingBudget.value) {
       const response = await budgetApi.update(editingBudget.value.id, data);
+      if (!response) {
+        throw new Error('予算の更新に失敗しました');
+      }
       const index = budgets.value.findIndex(b => b.id === editingBudget.value!.id);
       if (index !== -1) {
         budgets.value[index] = response.data;
       }
     } else {
       const response = await budgetApi.create(data);
+      if (!response) {
+        throw new Error('予算の作成に失敗しました');
+      }
       budgets.value.unshift(response.data);
     }
     closeDialog();

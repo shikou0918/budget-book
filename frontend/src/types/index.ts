@@ -68,3 +68,35 @@ export interface CreateBudgetRequest {
   target_year: number;
   target_month: number;
 }
+
+// API error types for better error handling
+export interface ApiError {
+  message: string;
+  statusCode?: number;
+  originalError?: unknown;
+  timestamp: string;
+}
+
+export class ApplicationError extends Error {
+  constructor(
+    message: string,
+    public statusCode?: number,
+    public originalError?: unknown,
+  ) {
+    super(message);
+    this.name = 'ApplicationError';
+    // Maintain proper stack trace for where our error was thrown
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ApplicationError);
+    }
+  }
+
+  toJSON(): ApiError {
+    return {
+      message: this.message,
+      statusCode: this.statusCode,
+      originalError: this.originalError,
+      timestamp: new Date().toISOString(),
+    };
+  }
+}

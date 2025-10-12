@@ -44,6 +44,9 @@ const fetchMonthlySummary = async () => {
   try {
     const now = new Date();
     const response = await summaryApi.getMonthly(now.getFullYear(), now.getMonth() + 1);
+    if (!response) {
+      throw new Error('月次サマリーの取得に失敗しました');
+    }
     summary.value = response.data;
   } catch (err) {
     error.value = '月次サマリーの取得に失敗しました';

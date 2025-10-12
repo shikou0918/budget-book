@@ -64,6 +64,9 @@ const fetchSummary = async () => {
   error.value = null;
   try {
     const response = await summaryApi.getMonthly(selectedYear.value, selectedMonth.value);
+    if (!response) {
+      throw new Error('サマリーの取得に失敗しました');
+    }
     summary.value = response.data;
   } catch (err) {
     error.value = 'サマリーの取得に失敗しました';
