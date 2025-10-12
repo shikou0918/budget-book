@@ -1,180 +1,105 @@
-# CLAUDE.md
+# AI駆動開発 共通ガイドライン
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 開発の基本理念
+- 動くコードを書くだけでなく、品質・保守性・安全性を常に意識する
+- プロジェクトの段階（プロトタイプ、MVP、本番環境）に応じて適切なバランスを取る
+- 問題を見つけたら放置せず、必ず対処または明示的に記録する
+- ボーイスカウトルール：コードを見つけた時よりも良い状態で残す
 
-## Project Overview
+## エラーハンドリングの原則
+- 関連が薄く見えるエラーでも必ず解決する
+- エラーの抑制（@ts-ignore、try-catch で握りつぶす等）ではなく、根本原因を修正
+- 早期にエラーを検出し、明確なエラーメッセージを提供
+- エラーケースも必ずテストでカバーする
+- 外部APIやネットワーク通信は必ず失敗する可能性を考慮
 
-Budget Book (家計簿) is a full-stack personal finance management application with Go backend and Vue 3 frontend. The backend follows Clean Architecture principles with strict layer separation.
+## コード品質の基準
+- DRY原則：重複を避け、単一の信頼できる情報源を維持
+- 意味のある変数名・関数名で意図を明確に伝える
+- プロジェクト全体で一貫したコーディングスタイルを維持
+- 小さな問題も放置せず、発見次第修正（Broken Windows理論）
+- コメントは「なぜ」を説明し、「何を」はコードで表現
 
-## Common Commands
+## テスト規律
+- テストをスキップせず、問題があれば修正する
+- 実装詳細ではなく振る舞いをテスト
+- テスト間の依存を避け、任意の順序で実行可能に
+- テストは高速で、常に同じ結果を返すように
+- カバレッジは指標であり、質の高いテストを重視
 
-### Development Setup
-```bash
-# Install all dependencies (backend + frontend)
-make install
+## 保守性とリファクタリング
+- 機能追加と同時に既存コードの改善を検討
+- 大規模な変更は小さなステップに分割
+- 使用されていないコードは積極的に削除
+- 依存関係は定期的に更新（セキュリティと互換性のため）
+- 技術的負債は明示的にコメントやドキュメントに記録
 
-# Start all services with Docker
-docker-compose up -d
+## セキュリティの考え方
+- APIキー、パスワード等は環境変数で管理（ハードコード禁止）
+- すべての外部入力を検証
+- 必要最小限の権限で動作（最小権限の原則）
+- 不要な依存関係を避ける
+- セキュリティ監査ツールを定期的に実行
 
-# Start backend only (requires MySQL running)
-cd backend && go run cmd/api/main.go
+## パフォーマンスの意識
+- 推測ではなく計測に基づいて最適化
+- 初期段階から拡張性を考慮
+- 必要になるまでリソースの読み込みを遅延
+- キャッシュの有効期限と無効化戦略を明確に
+- N+1問題やオーバーフェッチを避ける
 
-# Start frontend only
-cd frontend && yarn dev
-```
+## 信頼性の確保
+- タイムアウト処理を適切に設定
+- リトライ機構の実装（指数バックオフを考慮）
+- サーキットブレーカーパターンの活用
+- 一時的な障害に対する耐性を持たせる
+- 適切なログとメトリクスで可観測性を確保
 
-### Testing
-```bash
-# Run all tests (backend + frontend)
-make test
+## プロジェクトコンテキストの理解
+- ビジネス要件と技術要件のバランスを取る
+- 現在のフェーズで本当に必要な品質レベルを判断
+- 時間制約がある場合でも、最低限の品質基準を維持
+- チーム全体の技術レベルに合わせた実装選択
 
-# Backend tests only
-cd backend && go test ./...
+## トレードオフの認識
+- すべてを完璧にすることは不可能（銀の弾丸は存在しない）
+- 制約の中で最適なバランスを見つける
+- プロトタイプなら簡潔さを、本番なら堅牢性を優先
+- 妥協点とその理由を明確にドキュメント化
 
-# Backend tests with verbose output
-cd backend && go test -v ./...
+## Git運用の基本
+- コンベンショナルコミット形式を使用（feat:, fix:, docs:, test:, refactor:, chore:）
+- コミットは原子的で、単一の変更に焦点を当てる
+- 明確で説明的なコミットメッセージを英語で記述
+- main/masterブランチへの直接コミットは避ける
 
-# Backend tests with coverage
-cd backend && go test -cover ./...
+## コードレビューの姿勢
+- レビューコメントは建設的な改善提案として受け取る
+- 個人ではなくコードに焦点を当てる
+- 変更の理由と影響を明確に説明
+- フィードバックを学習機会として歓迎
 
-# Single package test
-cd backend && go test ./usecase/
-cd backend && go test ./interface/handler/
+## デバッグのベストプラクティス
+- 問題を確実に再現できる手順を確立
+- 二分探索で問題の範囲を絞り込む
+- 最近の変更から調査を開始
+- デバッガー、プロファイラー等の適切なツールを活用
+- 調査結果と解決策を記録し、知識を共有
 
-# Frontend tests (watch mode)
-cd frontend && yarn test
+## 依存関係の管理
+- 本当に必要な依存関係のみを追加
+- package-lock.json等のロックファイルを必ずコミット
+- 新しい依存関係追加前にライセンス、サイズ、メンテナンス状況を確認
+- セキュリティパッチとバグ修正のため定期的に更新
 
-# Frontend tests (single run)
-cd frontend && yarn test:run
+## ドキュメントの基準
+- READMEにプロジェクトの概要、セットアップ、使用方法を明確に記載
+- ドキュメントをコードと同期して更新
+- 実例を示すことを優先
+- 重要な設計判断はADR (Architecture Decision Records)で記録
 
-# Frontend tests with coverage
-cd frontend && yarn test:coverage
-```
-
-### Code Quality
-```bash
-# Lint (backend + frontend)
-make lint
-
-# Lint with auto-fix
-make lint-fix
-
-# Format code
-make format
-
-# TypeScript type checking
-make type-check
-# or
-cd frontend && yarn type-check
-```
-
-### Mock Generation (Backend)
-```bash
-# Regenerate mocks after changing repository interfaces
-cd backend
-mockgen -source=usecase/transaction.go -destination=mocks/repository/transaction_mock.go -package=repository
-mockgen -source=usecase/category.go -destination=mocks/repository/category_mock.go -package=repository
-```
-
-## Architecture
-
-### Backend: Clean Architecture with DI
-
-The backend follows a strict layered architecture with dependency inversion:
-
-```
-entity/              Domain entities with business logic validation
-  ↑
-usecase/            Business logic + Repository interfaces (DEFINED HERE)
-  ↑
-infrastructure/     Repository implementations (DEPEND ON usecase interfaces)
-  repository/
-  ↑
-interface/          HTTP handlers (depend on usecase)
-  handler/
-  middleware/
-```
-
-**Critical Pattern**: Repository interfaces are defined in `usecase/` packages (e.g., `TransactionRepositoryInterface` in `usecase/transaction.go`), and implementations live in `infrastructure/repository/`. This enables the dependency inversion principle.
-
-**Dependency Injection Flow** (see `cmd/api/main.go:25-87`):
-1. Create repository implementations with DB connection
-2. Inject repositories into use cases (which only know about interfaces)
-3. Inject use cases into handlers
-4. Register handlers to Echo routes
-
-**Testing Strategy**:
-- Entity tests: Pure domain logic validation
-- Usecase tests: Business logic with mocked repositories (using mockgen)
-- Handler tests: Integration tests with real SQLite database
-- All tests use testify for assertions
-
-### Frontend: Vue 3 Composition API
-
-```
-views/              Page components (BudgetView, CategoryView, etc.)
-  ↓
-components/         Reusable UI components
-  ↓
-stores/ (Pinia)     State management with API integration
-  ↓
-services/api.ts     Axios client configuration
-```
-
-**State Management**: Pinia stores handle both state and API calls. Components interact with stores, not API directly.
-
-**Testing**: Vitest + Vue Test Utils with jsdom. Tests live in `__tests__/` directories alongside source files.
-
-## Key Technologies
-
-### Backend
-- Echo v4: Web framework
-- GORM: ORM with MySQL (production) and SQLite (testing)
-- validator.v9: Request validation
-- mockgen: Type-safe mock generation for testing
-
-### Frontend
-- Vue 3 + TypeScript: Composition API with script setup
-- Vuetify: Material Design components
-- Pinia: State management
-- Chart.js + vue-chartjs: Data visualization
-- Vitest: Testing framework
-
-## Service URLs
-
-When running with docker-compose:
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8080
-- MySQL: localhost:3306
-
-## Important Patterns
-
-### Backend Repository Interface Pattern
-When creating a new feature:
-1. Define entity in `entity/`
-2. Define repository interface in `usecase/[feature].go`
-3. Implement use case logic in same file
-4. Create repository implementation in `infrastructure/repository/`
-5. Create handler in `interface/handler/`
-6. Wire up in `cmd/api/main.go`
-
-### Backend Testing Pattern
-- Use `mockgen` to generate mocks from repository interfaces
-- Usecase tests mock repositories
-- Handler tests use real SQLite database for integration testing
-- See `usecase/transaction_test.go` and `interface/handler/transaction_test.go` for examples
-
-### Frontend Component Pattern
-- Use `<script setup lang="ts">` with Composition API
-- Define types in `types/`
-- Store business logic in Pinia stores
-- Keep components focused on presentation
-
-## Database
-
-MySQL is used in production. SQLite is used for backend integration tests.
-
-Connection configured via environment variables:
-- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
-
-See `docker-compose.yml` for default values.
+## 継続的な改善
+- 学んだことを次のプロジェクトに活かす
+- 定期的に振り返りを行い、プロセスを改善
+- 新しいツールや手法を適切に評価して取り入れる
+- チームや将来の開発者のために知識を文書化
