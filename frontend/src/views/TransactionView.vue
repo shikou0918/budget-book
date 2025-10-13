@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useTransactionStore } from '@/stores/transaction';
+import { useCategoryStore } from '@/stores/category';
 import TransactionDialog from '@/components/transaction/TransactionDialog.vue';
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
 import type { Transaction, CreateTransactionRequest } from '@/types';
@@ -9,6 +10,7 @@ import TransactionTable from '@/components/transaction/TransactionTable.vue';
 import { useNotification } from '@/composables/useNotification';
 
 const transactionStore = useTransactionStore();
+const categoryStore = useCategoryStore();
 const { transactions, loading, error } = storeToRefs(transactionStore);
 const notification = useNotification();
 
@@ -66,6 +68,7 @@ const handleSave = async (data: CreateTransactionRequest) => {
 
 onMounted(() => {
   transactionStore.fetchTransactions();
+  categoryStore.fetchCategories();
 });
 </script>
 
