@@ -4,16 +4,28 @@ import { COLOR_PRESETS, DEFAULT_COLOR } from '@/config/colors';
 import BaseDialog from '@/components/common/BaseDialog.vue';
 import type { Category, CreateCategoryRequest } from '@/types';
 
+/**
+ * カテゴリダイアログコンポーネントのProps定義
+ */
 interface Props {
+  /** ダイアログの表示状態 */
   show: boolean;
+  /** 編集対象のカテゴリデータ（新規作成時はnull、任意） */
   category?: Category | null;
 }
 
-const props = defineProps<Props>();
-const emit = defineEmits<{
+/**
+ * カテゴリダイアログコンポーネントのEmits定義
+ */
+interface Emits {
+  /** ダイアログを閉じるイベント */
   close: [];
+  /** カテゴリデータを保存するイベント */
   save: [data: CreateCategoryRequest];
-}>();
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 const form = ref<CreateCategoryRequest>({
   name: '',

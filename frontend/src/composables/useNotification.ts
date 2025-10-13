@@ -1,8 +1,14 @@
 import { ref } from 'vue';
 
+/**
+ * 通知オプションの型定義
+ */
 interface NotificationOptions {
+  /** 通知メッセージ */
   message: string;
+  /** 通知の種別（任意） */
   type?: 'success' | 'error' | 'warning' | 'info';
+  /** 表示時間（ミリ秒、任意） */
   timeout?: number;
 }
 

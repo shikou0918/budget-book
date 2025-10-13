@@ -4,16 +4,28 @@ import { useCategoryStore } from '@/stores/category';
 import BaseDialog from '@/components/common/BaseDialog.vue';
 import type { Budget, CreateBudgetRequest } from '@/types';
 
+/**
+ * 予算ダイアログコンポーネントのProps定義
+ */
 interface Props {
+  /** ダイアログの表示状態 */
   show: boolean;
+  /** 編集対象の予算データ（新規作成時はnull、任意） */
   budget?: Budget | null;
 }
 
-const props = defineProps<Props>();
-const emit = defineEmits<{
+/**
+ * 予算ダイアログコンポーネントのEmits定義
+ */
+interface Emits {
+  /** ダイアログを閉じるイベント */
   close: [];
+  /** 予算データを保存するイベント */
   save: [data: CreateBudgetRequest];
-}>();
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 const categoryStore = useCategoryStore();
 const { categories } = categoryStore;

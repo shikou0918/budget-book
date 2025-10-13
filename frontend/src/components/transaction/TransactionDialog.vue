@@ -4,16 +4,28 @@ import { useCategoryStore } from '@/stores/category';
 import BaseDialog from '@/components/common/BaseDialog.vue';
 import type { Transaction, CreateTransactionRequest } from '@/types';
 
+/**
+ * 取引ダイアログコンポーネントのProps定義
+ */
 interface Props {
+  /** ダイアログの表示状態 */
   show: boolean;
+  /** 編集対象の取引データ（新規作成時はnull、任意） */
   transaction?: Transaction | null;
 }
 
-const props = defineProps<Props>();
-const emit = defineEmits<{
+/**
+ * 取引ダイアログコンポーネントのEmits定義
+ */
+interface Emits {
+  /** ダイアログを閉じるイベント */
   close: [];
+  /** 取引データを保存するイベント */
   save: [data: CreateTransactionRequest];
-}>();
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 const categoryStore = useCategoryStore();
 const { categories } = categoryStore;

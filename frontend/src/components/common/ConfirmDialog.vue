@@ -1,18 +1,33 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
+/**
+ * 確認ダイアログコンポーネントのProps定義
+ */
 interface Props {
+  /** ダイアログの表示状態（v-model） */
   modelValue: boolean;
+  /** ダイアログのタイトル（任意） */
   title?: string;
+  /** 確認メッセージ */
   message: string;
+  /** 確認ボタンのテキスト（任意） */
   confirmText?: string;
+  /** キャンセルボタンのテキスト（任意） */
   cancelText?: string;
+  /** 確認ボタンの色（任意） */
   confirmColor?: string;
 }
 
+/**
+ * 確認ダイアログコンポーネントのEmits定義
+ */
 interface Emits {
+  /** ダイアログ表示状態の更新イベント */
   (e: 'update:modelValue', value: boolean): void;
+  /** 確認ボタンクリックイベント */
   (e: 'confirm'): void;
+  /** キャンセルボタンクリックイベント */
   (e: 'cancel'): void;
 }
 

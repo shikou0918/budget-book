@@ -13,12 +13,19 @@ import {
 // Register required Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Props definition
+/**
+ * 円グラフコンポーネントのProps定義
+ */
 interface Props {
+  /** グラフのラベル配列 */
   labels: string[];
+  /** グラフのデータ配列 */
   data: number[];
+  /** グラフのタイトル（任意） */
   title?: string;
+  /** 各データの背景色配列（任意） */
   backgroundColor?: string[];
+  /** グラフの高さ（ピクセル、任意） */
   height?: number;
 }
 

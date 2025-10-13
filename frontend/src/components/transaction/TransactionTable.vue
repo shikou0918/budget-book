@@ -2,25 +2,33 @@
 import { computed, ref } from 'vue';
 import type { Transaction } from '@/types';
 
+/**
+ * 取引テーブルコンポーネントのProps定義
+ */
 interface Props {
-  /** 取引 */
+  /** 表示する取引データの配列 */
   transactions: Transaction[];
-  /** ローディング中 */
+  /** ローディング状態（任意） */
   loading?: boolean;
-  /** 検索表示 */
+  /** 検索フィールドの表示制御（任意） */
   showSearch?: boolean;
-  /** 操作表示 */
+  /** 操作ボタン（編集・削除）の表示制御（任意） */
   showActions?: boolean;
-  /** ページ */
+  /** 1ページあたりの表示件数（任意） */
   itemsPerPage?: number;
-  /** 高さ */
+  /** テーブルの高さ（任意） */
   height?: string | number;
-  /** エラー */
+  /** エラーメッセージ（任意） */
   error?: string | null;
 }
 
+/**
+ * 取引テーブルコンポーネントのEmits定義
+ */
 interface Emits {
+  /** 取引の編集イベント */
   (e: 'edit', transaction: Transaction): void;
+  /** 取引の削除イベント */
   (e: 'delete', id: number): void;
 }
 

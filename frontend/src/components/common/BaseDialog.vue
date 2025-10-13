@@ -1,17 +1,29 @@
 <script setup lang="ts">
+/**
+ * ベースダイアログコンポーネントのProps定義
+ */
 interface Props {
+  /** ダイアログの表示状態 */
   show: boolean;
+  /** ダイアログのタイトル */
   title: string;
+  /** ダイアログの最大幅（任意） */
   maxWidth?: string;
+}
+
+/**
+ * ベースダイアログコンポーネントのEmits定義
+ */
+interface Emits {
+  /** ダイアログを閉じるイベント */
+  close: [];
 }
 
 withDefaults(defineProps<Props>(), {
   maxWidth: '500px',
 });
 
-const emit = defineEmits<{
-  close: [];
-}>();
+const emit = defineEmits<Emits>();
 
 const handleOverlayClick = (e: Event) => {
   if (e.target === e.currentTarget) {
