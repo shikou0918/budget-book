@@ -13,6 +13,7 @@
 - **Validator v9** - バリデーション
 - **Testify** - テストライブラリ
 - **mockgen** - モック生成ツール
+- **Air** - ホットリロード（開発環境）
 
 ### Frontend
 - **Vue 3** - フロントエンドフレームワーク
@@ -103,6 +104,7 @@ interface/          # HTTPハンドラー（usecaseに依存）
 - Go 1.21+ (ローカル開発時)
 - Node.js 20+ & Yarn (ローカル開発時)
 - mockgen (モック生成時)
+- Air (Goホットリロード、Dockerコンテナ内で自動インストール)
 
 ### Docker での起動
 
@@ -112,6 +114,9 @@ docker-compose up -d
 
 # ログ確認
 docker-compose logs -f
+
+# バックエンドのみ再ビルド（コード変更時）
+docker-compose up -d --build backend
 ```
 
 サービスURL:
@@ -119,7 +124,23 @@ docker-compose logs -f
 - Backend API: http://localhost:8080
 - MySQL: localhost:3306
 
+**開発時の注意**: バックエンドは [Air](https://github.com/cosmtrek/air) によるホットリロードを使用しています。`backend/`ディレクトリ内のGoファイルを編集すると、自動的に再ビルド・再起動されます。
+
 ### ローカル開発
+
+#### Dockerを使った開発（推奨）
+
+```bash
+# 全サービス起動（ホットリロード有効）
+docker-compose up -d
+
+# ログをリアルタイムで確認
+docker-compose logs -f backend
+
+# バックエンドのコードを編集すると、Airが自動で再ビルド・再起動
+```
+
+#### ローカル環境での開発
 
 ```bash
 # 依存関係インストール
@@ -128,8 +149,11 @@ make install
 # データベース起動
 docker-compose up -d mysql
 
-# バックエンド起動
+# バックエンド起動（Airでホットリロード）
 cd backend
+air
+
+# または通常起動
 go run cmd/api/main.go
 
 # フロントエンド起動 (別ターミナル)

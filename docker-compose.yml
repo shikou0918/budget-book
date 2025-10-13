@@ -20,7 +20,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: budget_book_backend
     ports:
       - "8080:8080"
@@ -30,6 +30,8 @@ services:
       DB_USER: root
       DB_PASSWORD: password
       DB_NAME: budget_book
+    volumes:
+      - ./backend:/app
     depends_on:
       ### DBのヘルスチェック完了までAPIサーバーの起動を待つ
       mysql:
