@@ -5,7 +5,7 @@
 ## 技術スタック
 
 ### Backend
-- **Go** 1.21
+- **Go** 1.25
 - **Echo v4** - Web フレームワーク
 - **GORM** - ORM
 - **MySQL** 8.0 - データベース
@@ -101,7 +101,7 @@ interface/          # HTTPハンドラー（usecaseに依存）
 
 ### 前提条件
 - Docker & Docker Compose
-- Go 1.21+ (ローカル開発時)
+- Go 1.25+ (ローカル開発時)
 - Node.js 20+ & Yarn (ローカル開発時)
 - mockgen (モック生成時)
 - Air (Goホットリロード、Dockerコンテナ内で自動インストール)
