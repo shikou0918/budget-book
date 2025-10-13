@@ -30,7 +30,6 @@ const pieChartData = computed(() => {
   const categories = Object.values(summary.value.category_summary)
     .filter(detail => detail.category_type === chartType.value && detail.total > 0)
     .sort((a, b) => b.total - a.total);
-
   return {
     labels: categories.map(detail => detail.category_name),
     data: categories.map(detail => detail.total),
@@ -71,15 +70,15 @@ onMounted(async () => {
         <div v-else-if="summary">
           <div class="summary-stats">
             <div class="stat">
-              <span class="stat-label">収入</span>
+              <span>収入</span>
               <span class="stat-value income">¥{{ formatNumber(summary.total_income) }}</span>
             </div>
             <div class="stat">
-              <span class="stat-label">支出</span>
+              <span>支出</span>
               <span class="stat-value expense">¥{{ formatNumber(summary.total_expense) }}</span>
             </div>
             <div class="stat">
-              <span class="stat-label">残高</span>
+              <span>残高</span>
               <span
                 class="stat-value"
                 :class="{ income: summary.balance >= 0, expense: summary.balance < 0 }"
@@ -128,7 +127,6 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  margin-bottom: 2rem;
 }
 
 .summary-card {
@@ -145,16 +143,9 @@ onMounted(async () => {
   text-align: center;
 }
 
-.stat-label {
-  display: block;
-  font-size: 0.875rem;
-  color: #666;
-  margin-bottom: 0.5rem;
-}
-
 .stat-value {
   display: block;
-  font-size: 1.5rem;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -177,21 +168,5 @@ onMounted(async () => {
 .chart-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.chart-header h3 {
-  margin: 0;
-}
-
-.chart-type-selector {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.chart-type-selector .btn {
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
 }
 </style>
