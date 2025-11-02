@@ -17,7 +17,7 @@ const {
 const summary = ref<MonthlySummary | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const chartType = ref<'income' | 'expense'>('expense');
+const chartType = ref<'income' | 'expense'>('income');
 
 const formatNumber = (num: number) => {
   return new Intl.NumberFormat('ja-JP').format(num);
@@ -27,9 +27,25 @@ const pieChartData = computed(() => {
   if (!summary.value?.category_summary) {
     return { labels: [], data: [] };
   }
+
   const categories = Object.values(summary.value.category_summary)
     .filter(detail => detail.category_type === chartType.value && detail.total > 0)
     .sort((a, b) => b.total - a.total);
+
+  // フィルター結果が空で、現在expenseを表示しようとしている場合
+  if (categories.length === 0 && chartType.value === 'expense') {
+    // incomeのデータがあるか確認
+    const hasIncome = Object.values(summary.value.category_summary).some(
+      detail => detail.category_type === 'income' && detail.total > 0
+    );
+
+    if (hasIncome) {
+      chartType.value = 'income';
+      // 再帰的に計算し直す（次回のcomputed実行で正しい値が返される）
+      // return pieChartData.value;
+    }
+  }
+
   return {
     labels: categories.map(detail => detail.category_name),
     data: categories.map(detail => detail.total),
