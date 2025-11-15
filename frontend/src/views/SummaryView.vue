@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { summaryApi } from '@/services/api';
+import { formatNumber } from '@/utils/formatters';
 import type { MonthlySummary } from '@/types/index';
 import PieChart from '@/components/common/PieChart.vue';
 
@@ -48,10 +49,6 @@ const pieChartData = computed(() => {
     data: categories.map(detail => detail.total),
   };
 });
-
-const formatNumber = (num: number) => {
-  return new Intl.NumberFormat('ja-JP').format(num);
-};
 
 const getPercentageClass = (percentage: number) => {
   if (percentage <= 70) return 'percentage-good';

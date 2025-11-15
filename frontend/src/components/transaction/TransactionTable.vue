@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { formatNumber } from '@/utils/formatters';
 import type { Transaction } from '@/types';
 
 /**
@@ -59,10 +60,6 @@ const headers = computed(() => {
 const emit = defineEmits<Emits>();
 
 const search = ref('');
-
-const formatNumber = (num: number) => {
-  return new Intl.NumberFormat('ja-JP').format(num);
-};
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('ja-JP');

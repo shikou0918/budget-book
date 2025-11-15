@@ -2,6 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { budgetApi } from '@/services/api';
 import BudgetDialog from '@/components/budget/BudgetDialog.vue';
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue';
+import { useNotification } from '@/composables/useNotification';
+import { formatNumber } from '@/utils/formatters';
 import type { Budget, CreateBudgetRequest } from '@/types';
 
 const budgets = ref<Budget[]>([]);
@@ -10,10 +13,10 @@ const error = ref<string | null>(null);
 const showCreateDialog = ref(false);
 const showEditDialog = ref(false);
 const editingBudget = ref<Budget | null>(null);
+const showDeleteConfirm = ref(false);
+const deletingBudgetId = ref<number | null>(null);
 
-const formatNumber = (num: number) => {
-  return new Intl.NumberFormat('ja-JP').format(num);
-};
+const notification = useNotification();
 
 const fetchBudgets = async () => {
   loading.value = true;
@@ -36,15 +39,27 @@ const editBudget = (budget: Budget) => {
   showEditDialog.value = true;
 };
 
-const deleteBudget = async (id: number) => {
-  if (confirm('この予算を削除しますか？')) {
-    try {
-      await budgetApi.delete(id);
-      budgets.value = budgets.value.filter(b => b.id !== id);
-    } catch (err) {
-      alert('予算の削除に失敗しました');
-    }
+const confirmDelete = (id: number) => {
+  deletingBudgetId.value = id;
+  showDeleteConfirm.value = true;
+};
+
+const handleDeleteConfirm = async () => {
+  if (deletingBudgetId.value === null) return;
+
+  try {
+    await budgetApi.delete(deletingBudgetId.value);
+    budgets.value = budgets.value.filter(b => b.id !== deletingBudgetId.value);
+    notification.success('予算を削除しました');
+  } catch (err) {
+    notification.error('予算の削除に失敗しました');
+  } finally {
+    deletingBudgetId.value = null;
   }
+};
+
+const handleDeleteCancel = () => {
+  deletingBudgetId.value = null;
 };
 
 const closeDialog = () => {
@@ -64,16 +79,18 @@ const handleSave = async (data: CreateBudgetRequest) => {
       if (index !== -1) {
         budgets.value[index] = response.data;
       }
+      notification.success('予算を更新しました');
     } else {
       const response = await budgetApi.create(data);
       if (!response) {
         throw new Error('予算の作成に失敗しました');
       }
       budgets.value.unshift(response.data);
+      notification.success('予算を作成しました');
     }
     closeDialog();
   } catch (err) {
-    alert('予算の保存に失敗しました');
+    notification.error('予算の保存に失敗しました');
   }
 };
 
@@ -112,7 +129,7 @@ onMounted(() => {
                 <td>¥{{ formatNumber(budget.amount) }}</td>
                 <td>
                   <button class="btn btn-secondary" @click="editBudget(budget)">編集</button>
-                  <button class="btn btn-danger" @click="deleteBudget(budget.id)">削除</button>
+                  <button class="btn btn-danger" @click="confirmDelete(budget.id)">削除</button>
                 </td>
               </tr>
             </tbody>
@@ -127,6 +144,17 @@ onMounted(() => {
       :budget="editingBudget"
       @close="closeDialog"
       @save="handleSave"
+    />
+
+    <ConfirmDialog
+      v-model="showDeleteConfirm"
+      title="予算の削除"
+      message="この予算を削除しますか？"
+      confirm-text="削除"
+      cancel-text="キャンセル"
+      confirm-color="error"
+      @confirm="handleDeleteConfirm"
+      @cancel="handleDeleteCancel"
     />
   </div>
 </template>

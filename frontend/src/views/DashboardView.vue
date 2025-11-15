@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useTransactionStore } from '@/stores/transaction';
 import { summaryApi } from '@/services/api';
+import { formatNumber } from '@/utils/formatters';
 import type { MonthlySummary } from '@/types';
 import { storeToRefs } from 'pinia';
 import TransactionTable from '@/components/transaction/TransactionTable.vue';
@@ -19,10 +20,6 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const chartType = ref<'income' | 'expense'>('income');
 
-const formatNumber = (num: number) => {
-  return new Intl.NumberFormat('ja-JP').format(num);
-};
-
 const pieChartData = computed(() => {
   if (!summary.value?.category_summary) {
     return { labels: [], data: [] };
@@ -32,25 +29,34 @@ const pieChartData = computed(() => {
     .filter(detail => detail.category_type === chartType.value && detail.total > 0)
     .sort((a, b) => b.total - a.total);
 
-  // フィルター結果が空で、現在expenseを表示しようとしている場合
-  if (categories.length === 0 && chartType.value === 'expense') {
-    // incomeのデータがあるか確認
-    const hasIncome = Object.values(summary.value.category_summary).some(
-      detail => detail.category_type === 'income' && detail.total > 0
-    );
-
-    if (hasIncome) {
-      chartType.value = 'income';
-      // 再帰的に計算し直す（次回のcomputed実行で正しい値が返される）
-      // return pieChartData.value;
-    }
-  }
-
   return {
     labels: categories.map(detail => detail.category_name),
     data: categories.map(detail => detail.total),
   };
 });
+
+// summaryが読み込まれた時、適切なchartTypeを設定
+watch(
+  summary,
+  newSummary => {
+    if (!newSummary?.category_summary) return;
+
+    const hasIncome = Object.values(newSummary.category_summary).some(
+      detail => detail.category_type === 'income' && detail.total > 0
+    );
+    const hasExpense = Object.values(newSummary.category_summary).some(
+      detail => detail.category_type === 'expense' && detail.total > 0
+    );
+
+    // 初期表示時、incomeがあればincome、なければexpenseを表示
+    if (hasIncome) {
+      chartType.value = 'income';
+    } else if (hasExpense) {
+      chartType.value = 'expense';
+    }
+  },
+  { immediate: true }
+);
 
 const fetchMonthlySummary = async () => {
   loading.value = true;
